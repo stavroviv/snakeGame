@@ -8,7 +8,6 @@ import javax.swing.Timer;
 
 @SuppressWarnings("serial")
 public class GameAction extends Canvas {
-
 	
 	int Score;
 	public int delay = 50;
@@ -20,9 +19,7 @@ public class GameAction extends Canvas {
 	boolean inGame = false;
 	public Direction dir;
 	boolean isPaused = false;
-	
 	Graphics buf;
-	private Image offscreen = null;
 
 	void paintForeground(Graphics g) {
 

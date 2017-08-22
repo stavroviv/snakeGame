@@ -28,7 +28,7 @@ public class GameAction extends Canvas {
 	public int delay = 50;
 	Animals snake;
 	Animals[] anim = new Animals[mainForm.playHeight*mainForm.playWidth];
-	int i, j;
+	int i, j, count;
 	int xApple, yApple;
 	Timer timer;
 	boolean inGame = false;
@@ -190,32 +190,30 @@ public class GameAction extends Canvas {
 
 	}
 
+	void addAnimals(int qAnimals, animalType aType) {
+		
+		for (int i = 0; i < qAnimals; i++) {
+			count++;
+			Animals frogg = new Animals(aType);
+			anim[count] = frogg;
+		}
+		
+	}
+	
 	public void Start() {
 		
 		if (!isPaused) {
+			
 			Score = 0;
-			int count = 0;
+			
+			count = 0;
 			snake = new Animals(animalType.Snake);
 			anim[count] = snake;
+			
+			addAnimals(mainForm.greenFroggs, animalType.Frogg);
+			addAnimals(mainForm.redFroggs,	 animalType.RedFrogg);
+			addAnimals(mainForm.blueFroggs,	 animalType.BlueFrogg);
 
-			for (int i = 0; i < mainForm.greenFroggs; i++) {
-				count++;
-				Animals frogg = new Animals(animalType.Frogg);
-				anim[count] = frogg;
-			}
-			
-			for (int i = 0; i < mainForm.redFroggs; i++) {
-				count++;
-				Animals frogg = new Animals(animalType.RedFrogg);
-				anim[count] = frogg;
-			}
-			
-			for (int i = 0; i < mainForm.blueFroggs; i++) {
-				count++;
-				Animals frogg = new Animals(animalType.BlueFrogg);
-				anim[count] = frogg;
-			}
-			
 			timer = new Timer(delay, new ActionListener() {
 
 				@Override
@@ -225,12 +223,11 @@ public class GameAction extends Canvas {
 			});
 		} else {
 			for (int k = 0; k <= anim.length - 1; k++) {
-				if (anim[k] == null)
-					break;
+				if (anim[k] == null) break;
 				anim[k].unPauseAnim();
 			}
 		}
-		
+
 		timer.start();
 		inGame = true;
 		isPaused = false;

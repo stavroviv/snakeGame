@@ -14,7 +14,6 @@ public class Animals implements Runnable {
 	int snakeDelay = 200;
 	int frogDelay = 1000;
 	int lastStep_x, lastStep_y;
-//	int snakeSize = 7;
 	
 	int[] x = new int[mainForm.playWidth];
 	int[] y = new int[mainForm.playHeight];
@@ -55,11 +54,7 @@ public class Animals implements Runnable {
 		
 		thread = new Thread(this);
 		thread.start(); 
-		
-//		b.start();
-		 
-        
-		
+    	
 	}
 
 	public void stopAnim(){
@@ -75,30 +70,24 @@ public class Animals implements Runnable {
 	synchronized public void unPauseAnim() {
 		isPaused = false;
 		notify();
-//		System.out.println("Waiting for b to complete..." + thread.getId() + "  " + isPaused);
-		
 	}
 	
 	public void run() {
 		
 		try {
-			
+
 			while (!thread.isInterrupted()) {
 
 				move();
 				Thread.sleep(delay);
 
 				synchronized (this) {
-					while (isPaused) {
-//						System.out.println("Waiting for b to complete..." + thread.getId() + "  " + isPaused);
-						wait();
-//						System.out.println("after Waiting for b to complete..." + thread.getId() + "  " + isPaused);
-					}
+					while (isPaused) wait();
 				}
 			}
 
 		} catch (InterruptedException e) {
-//			System.out.println("Gоток stopped");
+			// System.out.println("Thread stopped");
 		}
 	}
 	

@@ -1,9 +1,7 @@
 package SnakeGame;
 
-import java.awt.Image;
 import java.util.Random;
 
-import javax.swing.Timer;
 
 public class Animals implements Runnable {
 

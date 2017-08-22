@@ -1,7 +1,5 @@
 package SnakeGame;
 
-import javax.swing.JLabel;
-
 public class snakeApp {
 	
 	public static mainForm snakeGame;

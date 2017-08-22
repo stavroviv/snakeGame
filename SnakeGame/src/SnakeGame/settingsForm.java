@@ -1,65 +1,27 @@
 package SnakeGame;
 
-import java.awt.BorderLayout;
-import java.awt.EventQueue;
+import java.awt.*;
+import javax.swing.*;
 
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-import javax.swing.JTextField;
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.LayoutStyle.ComponentPlacement;
-import javax.swing.JButton;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.Dialog.ModalExclusionType;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
-import java.awt.Component;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import java.awt.FlowLayout;
-import java.awt.GridLayout;
-import net.miginfocom.swing.MigLayout;
-import javax.swing.border.LineBorder;
-import java.awt.Color;
-import javax.swing.border.MatteBorder;
-import javax.swing.border.SoftBevelBorder;
-import javax.swing.border.BevelBorder;
-import javax.swing.UIManager;
-import javax.swing.border.EtchedBorder;
+import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
-import javax.swing.JFormattedTextField;
+
 
 public class settingsForm extends JFrame {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3770120313513569298L;
 	private JPanel contentPane;
-	private JTextField height;
-	private JTextField width;
-	private JTextField bloskSize;
-	private JTextField snakeSize;
-	private JTextField greenFroggs;
-	private JTextField redFroggs;
-	private JTextField blueFroggs;
+	private JTextField height,width,bloskSize,snakeSize;
+	private JTextField greenFroggs, redFroggs,blueFroggs;
 
-	/**
-	 * Launch the application.
-	 */
-//	public static void main(String[] args) {
-//		EventQueue.invokeLater(new Runnable() {
-//			public void run() {
-//				try {
-//					settingsForm frame = new settingsForm();
-//					frame.setVisible(true);
-//				} catch (Exception e) {
-//					e.printStackTrace();
-//				}
-//			}
-//		});
-//	}
-
-	/**
-	 * Create the frame.
-	 */
 	public settingsForm() {
 		
 		setModalExclusionType(ModalExclusionType.APPLICATION_EXCLUDE);

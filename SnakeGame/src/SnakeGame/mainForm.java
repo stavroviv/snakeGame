@@ -22,6 +22,7 @@ import java.awt.event.WindowEvent;
 
 public class mainForm extends JFrame {
 
+	private static final long serialVersionUID = 6573850909783955564L;
 	public static int block=15, playHeight=600, playWidth=600;
 	public static int greenFroggs=20, redFroggs=5, blueFroggs=1, snakeSize=3;
 	public static JLabel labelScore;
@@ -157,10 +158,8 @@ public class mainForm extends JFrame {
 			}
 		});
 	
-
 	}
-	
-	
+		
 	public void setButtonsEnabled(String mode){
 		
 		if (mode == "Init") {

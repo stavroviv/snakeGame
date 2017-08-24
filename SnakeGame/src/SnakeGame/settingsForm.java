@@ -14,9 +14,6 @@ import javax.swing.border.TitledBorder;
 
 public class settingsForm extends JFrame {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 3770120313513569298L;
 	private JPanel contentPane;
 	private JTextField height,width,bloskSize,snakeSize;

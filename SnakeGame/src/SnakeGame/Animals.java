@@ -85,7 +85,7 @@ public class Animals implements Runnable {
 			}
 
 		} catch (InterruptedException e) {
-			// System.out.println("Thread stopped");
+	
 		}
 	}
 	
@@ -96,10 +96,6 @@ public class Animals implements Runnable {
 				x[i] = x[i - 1];
 				y[i] = y[i - 1];
 
-//				if (i > 3 && (x[i] == x[0]) && (y[i] == y[0])) {
-//					// Stop();
-//					return;
-//				}
 			}
 
 			if (dir == Direction.Right)
@@ -130,11 +126,7 @@ public class Animals implements Runnable {
 			x[0] = mainForm.playWidth-mainForm.block;
 		if (y[0] < 0)
 			y[0] = mainForm.playHeight-mainForm.block;
-		
-//		if (x[0] == xApple && y[0] == yApple) {
-//			snakeSize++;
-////			splaceFrogg();
-//		}
+
 	}
 }
 

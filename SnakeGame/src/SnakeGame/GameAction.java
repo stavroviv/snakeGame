@@ -88,10 +88,8 @@ public class GameAction extends Canvas {
 					for (int j=1; j<=snake.animSize-1; j++){
 						if (snake.x[j] == anim[k].x[0] && snake.y[j] == anim[k].y[0]) {
 							// The frog stays in place
-							System.out.println("collision snake " + snake.x[j] + " " + snake.y[j]);
 							anim[k].x[0] = anim[k].x[0] - anim[k].lastStep_x * mainForm.block;
 							anim[k].y[0] = anim[k].y[0] - anim[k].lastStep_y * mainForm.block;
-
 						}
 					}
 					continue;

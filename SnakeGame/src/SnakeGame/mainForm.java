@@ -15,10 +15,6 @@ import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingConstants;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 
 public class mainForm extends JFrame {
 
@@ -30,19 +26,7 @@ public class mainForm extends JFrame {
 	private JButton btnStart,btnPause,btnStop,btnSettings;
 
 	public mainForm() {
-		addWindowListener(new WindowAdapter() {
-			@Override
-			public void windowIconified(WindowEvent arg0) {
-				System.out.println("iconified ");
-			}
-		});
-		addComponentListener(new ComponentAdapter() {
-			@Override
-			public void componentResized(ComponentEvent arg0) {
-//				System.out.println("resised ");
-			}
-		});
-				
+		
 		setTitle("Snake");
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

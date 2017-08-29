@@ -18,6 +18,7 @@ public class settingsForm extends JFrame {
 	private JPanel contentPane;
 	private JTextField height,width,bloskSize,snakeSize;
 	private JTextField greenFroggs, redFroggs,blueFroggs;
+	private JTextField froggProb;
 
 	public settingsForm() {
 		
@@ -25,7 +26,7 @@ public class settingsForm extends JFrame {
 		setResizable(false);
 		setTitle("Settings");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 353, 197);
+		setBounds(100, 100, 353, 218);
 		setLocationRelativeTo(null);
 		setFocusable(true);
 		
@@ -34,6 +35,16 @@ public class settingsForm extends JFrame {
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
+		
+		JLabel lblNewLabel_3 = new JLabel("Prob.");
+		lblNewLabel_3.setBounds(151, 113, 40, 14);
+		contentPane.add(lblNewLabel_3);
+		
+		froggProb = new JTextField();
+		froggProb.setBounds(196, 110, 40, 20);
+		froggProb.setText("" + mainForm.froggProbability);
+		contentPane.add(froggProb);
+		froggProb.setColumns(10);
 		
 		JLabel lblNewLabel = new JLabel("Height");
 		lblNewLabel.setBounds(19, 35, 51, 20);
@@ -75,17 +86,16 @@ public class settingsForm extends JFrame {
 		contentPane.add(bloskSize);
 		
 		JButton btnNewButton_1 = new JButton("Cancel");
-		btnNewButton_1.setBounds(199, 136, 76, 23);
+		btnNewButton_1.setBounds(194, 155, 76, 23);
 		btnNewButton_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
 				dispose();
 			}
 		});
 		contentPane.add(btnNewButton_1);
 		
 		JButton btnNewButton = new JButton("OK");
-		btnNewButton.setBounds(118, 136, 71, 23);
+		btnNewButton.setBounds(113, 155, 71, 23);
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				mainForm.block = Integer.parseInt(bloskSize.getText());
@@ -97,9 +107,13 @@ public class settingsForm extends JFrame {
 				mainForm.redFroggs = Integer.parseInt(redFroggs.getText());
 				mainForm.blueFroggs = Integer.parseInt(blueFroggs.getText());
 				
+				mainForm.totalAnimals = mainForm.greenFroggs+mainForm.redFroggs+mainForm.blueFroggs+1;
+				mainForm.froggProbability = Double.parseDouble(froggProb.getText());
+//				mainForm.scrollPaneGame.setSize(900, 300);		
 				dispose();
 			}
 		});
+		
 		contentPane.add(btnNewButton);
 		
 		snakeSize = new JTextField();
@@ -146,13 +160,13 @@ public class settingsForm extends JFrame {
 		JLabel label = new JLabel("");
 		label.setVerticalAlignment(SwingConstants.TOP);
 		label.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Game field", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
-		label.setBounds(10, 10, 125, 110);
+		label.setBounds(10, 10, 125, 134);
 		contentPane.add(label);
 		
 		JLabel lblNewLabel_1 = new JLabel("");
 		lblNewLabel_1.setVerticalAlignment(SwingConstants.TOP);
 		lblNewLabel_1.setBorder(new TitledBorder(null, "Froggs", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		lblNewLabel_1.setBounds(140, 10, 120, 110);
+		lblNewLabel_1.setBounds(140, 10, 120, 134);
 		contentPane.add(lblNewLabel_1);
 	}
 }

@@ -9,14 +9,14 @@ import javax.swing.Timer;
 @SuppressWarnings("serial")
 public class GameAction extends Canvas {
 	
-	int Score;
+	static int Score;
 	public int delay = 50;
-	Animals snake;
-	Animals[] anim = new Animals[mainForm.playHeight*mainForm.playWidth];
+	public static Animals snake;
+	public static Animals[] anim = new Animals[mainForm.playHeight*mainForm.playWidth];
 	int i, j, count;
 	int xApple, yApple;
-	Timer timer;
-	boolean inGame = false;
+	static Timer timer;
+	static boolean inGame = false;
 	public Direction dir;
 	boolean isPaused = false;
 	Graphics buf;
@@ -66,98 +66,56 @@ public class GameAction extends Canvas {
 		g.drawOval(anim.x[i] + (mainForm.block - mainForm.block / size) / 2, anim.y[i] + (mainForm.block - mainForm.block / size) / 2, mainForm.block / size, mainForm.block / size);
 		
 	}
-	
-	public void checkCollisions() {
 		
-		// snake with snake
-		for (int j=1; j<=snake.animSize-1; j++){
-			if (snake.x[j] == snake.x[0] && snake.y[j] == snake.y[0]) {
-				// The frog stays in place
-				gameOver();
-
-			}
-		}
-		
-		for (int k = 1; k <= anim.length - 1; k++) {
-			if (anim[k] == null) break;
-			if (anim[k].die) continue;
-
-			for (int i = 0; i <= anim.length - 1; i++) {
-				// snake with froggs
-				if (i==0){
-					for (int j=1; j<=snake.animSize-1; j++){
-						if (snake.x[j] == anim[k].x[0] && snake.y[j] == anim[k].y[0]) {
-							// The frog stays in place
-							anim[k].x[0] = anim[k].x[0] - anim[k].lastStep_x * mainForm.block;
-							anim[k].y[0] = anim[k].y[0] - anim[k].lastStep_y * mainForm.block;
-						}
-					}
-					continue;
-				}
-				
-				if (anim[i] == null) break;
-				if (anim[i].die | i == k) continue;
-				
-				// froggs with froggs
-				if (anim[k].x[0] == anim[i].x[0] && anim[k].y[0] == anim[i].y[0]) {
-					// The frog stays in place
-					anim[i].x[0] = anim[i].x[0] - anim[i].lastStep_x * mainForm.block;
-					anim[i].y[0] = anim[i].y[0] - anim[i].lastStep_y * mainForm.block;
-
-				}
-
-			}
-		}
-
-	}
-	
 	public void draw(Graphics g) {
 
 		paintForeground(g);
+		mainForm.labelScore.setText("Score: " + Score);
 		
-		if (inGame) {
+		if (!inGame) return;
+		
+					
+		for (int k = 0; k <= mainForm.totalAnimals-1; k++) {
 			
-			mainForm.labelScore.setText("Score: " + Score);
-			checkCollisions();
+//			if (anim[k]==null)	break;
+			if (anim[k].die) continue;
 			
-			for (int k = 0; k <= anim.length-1; k++) {
-				
-				if (anim[k]==null)	break;
-				if (anim[k].die) continue;
-				
-				if (k == 0) {
-					for (int f = 1; f < anim.length-1; f++) {
-						if (anim[f]==null)	break;
-						if (anim[f].die) continue;
-						if (snake.x[0]==anim[f].x[0]&&snake.y[0]==anim[f].y[0]&&!anim[f].die) {
-							if (anim[f].getaType()==animalType.Frogg){
-								snake.animSize++;
-								Score++;
-							} else if (anim[f].getaType()==animalType.RedFrogg&&snake.animSize>3){
-								snake.animSize--;
-								Score+=2;
-							}else if (anim[f].getaType()==animalType.BlueFrogg){
-								gameOver();	
-							}
+			if (k == 0) {
+				for (int f = 1; f < anim.length-1; f++) {
+					if (anim[f]==null)	break;
+					if (anim[f].die) continue;
+					if (snake.x[0]==anim[f].x[0]&&snake.y[0]==anim[f].y[0]&&!anim[f].die) {
+						if (anim[f].getaType()==animalType.Frogg){
+							snake.animSize++;
+							Score++;
+						} else if (anim[f].getaType()==animalType.RedFrogg&&snake.animSize>3){
+							snake.animSize--;
+							Score+=2;
+						}else if (anim[f].getaType()==animalType.BlueFrogg){
+							gameOver();	
+							return;
+						}
+						if (anim[f] != null) {
 							anim[f].stopAnim();
-							anim[f].die=true;
+							anim[f].die = true;
 						}
 					}
 				}
-								
-				for (i = 0; i < anim[k].animSize; i++) {
-					
-					if (i == 0) {
-						paintPart(anim[k], g, 2);
-					} else if (i == anim[k].animSize - 1) {
-						paintPart(anim[k], g, 4);
-					} else {
-						paintPart(anim[k], g, 3);
-					}
+			}
+						
+			for (i = 0; i < anim[k].animSize; i++) {
+				
+				if (i == 0) {
+					paintPart(anim[k], g, 2);
+				} else if (i == anim[k].animSize - 1) {
+					paintPart(anim[k], g, 4);
+				} else {
+					paintPart(anim[k], g, 3);
 				}
 			}
-
 		}
+
+		
 	
 	}
 	
@@ -225,26 +183,27 @@ public class GameAction extends Canvas {
 		
 	}
 	
-	void gameOver () {
-		Stop();
+	public static void gameOver () {
 		mainForm.labelScore.setText("<html>Score: "+Score+"<p>GAME OVER</html>");
+		Stop();
 	}
 	
-	public void Stop() {
+	public static void Stop() {
 		
-		if (inGame) {
+		if (!inGame) return;
 		
-			timer.stop();
-			inGame = false;
+		timer.stop();
+		inGame = false;
 
-			for (int k = 0; k <= anim.length - 1; k++) {
-				if (anim[k] == null) break;
-				anim[k].stopAnim();
-			}
-			
-			snakeApp.snakeGame.setButtonsEnabled("Stop");
-			
+		for (int k = 0; k <= mainForm.totalAnimals - 1; k++) {
+			if (anim[k] == null) continue;
+			anim[k].stopAnim();
+			anim[k]=null;
 		}
+		
+		snakeApp.snakeGame.setButtonsEnabled("Stop");
+		
+		
 		
 	}
 

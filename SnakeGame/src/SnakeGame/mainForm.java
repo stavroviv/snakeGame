@@ -11,6 +11,8 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import java.awt.Font;
 import java.awt.ScrollPane;
+import java.awt.Scrollbar;
+
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
@@ -20,11 +22,13 @@ public class mainForm extends JFrame {
 
 	private static final long serialVersionUID = 6573850909783955564L;
 	public static int block=15, playHeight=600, playWidth=600;
-	public static int greenFroggs=20, redFroggs=5, blueFroggs=1, snakeSize=3;
+	public static int greenFroggs=20, redFroggs=5, blueFroggs=1, snakeSize=15;
+	public static int totalAnimals =  greenFroggs + redFroggs + blueFroggs + 1;
 	public static JLabel labelScore;
-	
+	public static ScrollPane scrollPaneGame;
 	private JButton btnStart,btnPause,btnStop,btnSettings;
-
+	public static double froggProbability=0.8;
+	
 	public mainForm() {
 		
 		setTitle("Snake");
@@ -40,22 +44,22 @@ public class mainForm extends JFrame {
 		game.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent arg0) {
-				Direction dirSn = game.snake.dir;
+				Direction dirSn = GameAction.snake.dir;
 				if (arg0.getButton()==1) {
-					if (dirSn==Direction.Right)	game.snake.dir=Direction.Up;
-					if (dirSn==Direction.Left)	game.snake.dir=Direction.Down;
-					if (dirSn==Direction.Up)	game.snake.dir=Direction.Left;
-					if (dirSn==Direction.Down)	game.snake.dir=Direction.Right;
+					if (dirSn==Direction.Right)	GameAction.snake.dir=Direction.Up;
+					if (dirSn==Direction.Left)	GameAction.snake.dir=Direction.Down;
+					if (dirSn==Direction.Up)	GameAction.snake.dir=Direction.Left;
+					if (dirSn==Direction.Down)	GameAction.snake.dir=Direction.Right;
 				} else if (arg0.getButton()==3){
-					if (dirSn==Direction.Right)	game.snake.dir=Direction.Down;
-					if (dirSn==Direction.Left)	game.snake.dir=Direction.Up;
-					if (dirSn==Direction.Up)	game.snake.dir=Direction.Right;
-					if (dirSn==Direction.Down)	game.snake.dir=Direction.Left;
+					if (dirSn==Direction.Right)	GameAction.snake.dir=Direction.Down;
+					if (dirSn==Direction.Left)	GameAction.snake.dir=Direction.Up;
+					if (dirSn==Direction.Up)	GameAction.snake.dir=Direction.Right;
+					if (dirSn==Direction.Down)	GameAction.snake.dir=Direction.Left;
 				}
 			}
 		});
 	
-		game.setBounds(7, 7, 580, 580);
+		game.setBounds(0, 0, 600, 600);
 		game.setFocusable(true);
 		
 		btnStart = new JButton("Start");
@@ -68,51 +72,46 @@ public class mainForm extends JFrame {
 		labelScore.setVerticalAlignment(SwingConstants.TOP);
 		labelScore.setFont(new Font("Tahoma", Font.BOLD, 14));
 		
-		ScrollPane s = new ScrollPane();
-		s.setSize(594, 594);
-		s.add(game);
-				
+		scrollPaneGame = new ScrollPane();
+		scrollPaneGame.setSize(300, 300);
+		scrollPaneGame.add(game);
 		GroupLayout groupLayout = new GroupLayout(getContentPane());
 		groupLayout.setHorizontalGroup(
-			groupLayout.createParallelGroup(Alignment.TRAILING)
+			groupLayout.createParallelGroup(Alignment.LEADING)
 				.addGroup(groupLayout.createSequentialGroup()
-					.addComponent(s, GroupLayout.PREFERRED_SIZE, 594, Short.MAX_VALUE)
 					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
 						.addGroup(groupLayout.createSequentialGroup()
-							.addGap(7)
-							.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-								.addComponent(btnSettings, GroupLayout.PREFERRED_SIZE, 143, GroupLayout.PREFERRED_SIZE)
-								.addComponent(btnStop, GroupLayout.PREFERRED_SIZE, 143, GroupLayout.PREFERRED_SIZE)))
+							.addGap(602)
+							.addComponent(btnStart, GroupLayout.PREFERRED_SIZE, 143, GroupLayout.PREFERRED_SIZE))
 						.addGroup(groupLayout.createSequentialGroup()
-							.addGap(10)
-							.addComponent(labelScore, GroupLayout.PREFERRED_SIZE, 141, GroupLayout.PREFERRED_SIZE)))
-					.addContainerGap())
-				.addGroup(groupLayout.createSequentialGroup()
-					.addGap(601)
-					.addComponent(btnStart, GroupLayout.PREFERRED_SIZE, 143, GroupLayout.PREFERRED_SIZE)
-					.addGap(10))
-				.addGroup(groupLayout.createSequentialGroup()
-					.addGap(601)
-					.addComponent(btnPause, GroupLayout.PREFERRED_SIZE, 143, GroupLayout.PREFERRED_SIZE)
-					.addGap(10))
+							.addGap(602)
+							.addComponent(btnPause, GroupLayout.PREFERRED_SIZE, 143, GroupLayout.PREFERRED_SIZE))
+						.addGroup(groupLayout.createSequentialGroup()
+							.addGap(601)
+							.addComponent(btnStop, GroupLayout.PREFERRED_SIZE, 143, GroupLayout.PREFERRED_SIZE))
+						.addGroup(groupLayout.createSequentialGroup()
+							.addGap(604)
+							.addComponent(labelScore, GroupLayout.PREFERRED_SIZE, 141, GroupLayout.PREFERRED_SIZE))
+						.addGroup(groupLayout.createSequentialGroup()
+							.addGap(601)
+							.addComponent(btnSettings, GroupLayout.PREFERRED_SIZE, 143, GroupLayout.PREFERRED_SIZE))
+						.addComponent(scrollPaneGame, GroupLayout.PREFERRED_SIZE, 593, GroupLayout.PREFERRED_SIZE))
+					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
 		);
 		groupLayout.setVerticalGroup(
 			groupLayout.createParallelGroup(Alignment.LEADING)
 				.addGroup(groupLayout.createSequentialGroup()
-					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-						.addComponent(s, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-						.addGroup(groupLayout.createSequentialGroup()
-							.addContainerGap()
-							.addComponent(btnStart, GroupLayout.PREFERRED_SIZE, 28, GroupLayout.PREFERRED_SIZE)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(btnPause, GroupLayout.PREFERRED_SIZE, 28, GroupLayout.PREFERRED_SIZE)
-							.addPreferredGap(ComponentPlacement.UNRELATED)
-							.addComponent(btnStop, GroupLayout.PREFERRED_SIZE, 28, GroupLayout.PREFERRED_SIZE)
-							.addPreferredGap(ComponentPlacement.UNRELATED)
-							.addComponent(labelScore, GroupLayout.PREFERRED_SIZE, 59, GroupLayout.PREFERRED_SIZE)
-							.addPreferredGap(ComponentPlacement.RELATED, 394, Short.MAX_VALUE)
-							.addComponent(btnSettings, GroupLayout.PREFERRED_SIZE, 28, GroupLayout.PREFERRED_SIZE)))
-					.addContainerGap())
+					.addGap(11)
+					.addComponent(btnStart, GroupLayout.PREFERRED_SIZE, 28, GroupLayout.PREFERRED_SIZE)
+					.addGap(6)
+					.addComponent(btnPause, GroupLayout.PREFERRED_SIZE, 28, GroupLayout.PREFERRED_SIZE)
+					.addGap(11)
+					.addComponent(btnStop, GroupLayout.PREFERRED_SIZE, 28, GroupLayout.PREFERRED_SIZE)
+					.addGap(11)
+					.addComponent(labelScore, GroupLayout.PREFERRED_SIZE, 59, GroupLayout.PREFERRED_SIZE)
+					.addGap(394)
+					.addComponent(btnSettings, GroupLayout.PREFERRED_SIZE, 28, GroupLayout.PREFERRED_SIZE))
+				.addComponent(scrollPaneGame, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 615, Short.MAX_VALUE)
 		);
 		getContentPane().setLayout(groupLayout);
 		
@@ -130,7 +129,7 @@ public class mainForm extends JFrame {
 		});
 		btnStop.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				game.Stop();
+				GameAction.Stop();
 				setButtonsEnabled("Stop");
 			}
 		});

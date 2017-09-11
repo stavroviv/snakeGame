@@ -17,24 +17,32 @@ import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingConstants;
+import net.miginfocom.swing.MigLayout;
+import javax.swing.SpringLayout;
+import javax.swing.JSeparator;
+import java.awt.Component;
+import javax.swing.Box;
+import java.awt.Dimension;
+import javax.swing.JToggleButton;
 
 public class mainForm extends JFrame {
 
 	private static final long serialVersionUID = 6573850909783955564L;
-	public static int block=15, playHeight=600, playWidth=600;
-	public static int greenFroggs=20, redFroggs=5, blueFroggs=1, snakeSize=15;
+	public static int block=20, playHeight=block*30, playWidth=block*40;
+	public static int greenFroggs=20, redFroggs=10, blueFroggs=5, snakeSize=3;
 	public static int totalAnimals =  greenFroggs + redFroggs + blueFroggs + 1;
 	public static JLabel labelScore;
 	public static ScrollPane scrollPaneGame;
 	private JButton btnStart,btnPause,btnStop,btnSettings;
 	public static double froggProbability=0.8;
+	public static boolean notDoubleBuffered;
 	
 	public mainForm() {
 		
 		setTitle("Snake");
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 770, 654);
+		setBounds(100, 100, 1000, 650);
 		setLocationRelativeTo(null);
 		setFocusable(true);
 
@@ -59,7 +67,7 @@ public class mainForm extends JFrame {
 			}
 		});
 	
-		game.setBounds(0, 0, 600, 600);
+		game.setBounds(0, 0, playWidth, playHeight);
 		game.setFocusable(true);
 		
 		btnStart = new JButton("Start");
@@ -73,47 +81,40 @@ public class mainForm extends JFrame {
 		labelScore.setFont(new Font("Tahoma", Font.BOLD, 14));
 		
 		scrollPaneGame = new ScrollPane();
-		scrollPaneGame.setSize(300, 300);
+		scrollPaneGame.setSize(600, 600);
 		scrollPaneGame.add(game);
-		GroupLayout groupLayout = new GroupLayout(getContentPane());
-		groupLayout.setHorizontalGroup(
-			groupLayout.createParallelGroup(Alignment.LEADING)
-				.addGroup(groupLayout.createSequentialGroup()
-					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-						.addGroup(groupLayout.createSequentialGroup()
-							.addGap(602)
-							.addComponent(btnStart, GroupLayout.PREFERRED_SIZE, 143, GroupLayout.PREFERRED_SIZE))
-						.addGroup(groupLayout.createSequentialGroup()
-							.addGap(602)
-							.addComponent(btnPause, GroupLayout.PREFERRED_SIZE, 143, GroupLayout.PREFERRED_SIZE))
-						.addGroup(groupLayout.createSequentialGroup()
-							.addGap(601)
-							.addComponent(btnStop, GroupLayout.PREFERRED_SIZE, 143, GroupLayout.PREFERRED_SIZE))
-						.addGroup(groupLayout.createSequentialGroup()
-							.addGap(604)
-							.addComponent(labelScore, GroupLayout.PREFERRED_SIZE, 141, GroupLayout.PREFERRED_SIZE))
-						.addGroup(groupLayout.createSequentialGroup()
-							.addGap(601)
-							.addComponent(btnSettings, GroupLayout.PREFERRED_SIZE, 143, GroupLayout.PREFERRED_SIZE))
-						.addComponent(scrollPaneGame, GroupLayout.PREFERRED_SIZE, 593, GroupLayout.PREFERRED_SIZE))
-					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-		);
-		groupLayout.setVerticalGroup(
-			groupLayout.createParallelGroup(Alignment.LEADING)
-				.addGroup(groupLayout.createSequentialGroup()
-					.addGap(11)
-					.addComponent(btnStart, GroupLayout.PREFERRED_SIZE, 28, GroupLayout.PREFERRED_SIZE)
-					.addGap(6)
-					.addComponent(btnPause, GroupLayout.PREFERRED_SIZE, 28, GroupLayout.PREFERRED_SIZE)
-					.addGap(11)
-					.addComponent(btnStop, GroupLayout.PREFERRED_SIZE, 28, GroupLayout.PREFERRED_SIZE)
-					.addGap(11)
-					.addComponent(labelScore, GroupLayout.PREFERRED_SIZE, 59, GroupLayout.PREFERRED_SIZE)
-					.addGap(394)
-					.addComponent(btnSettings, GroupLayout.PREFERRED_SIZE, 28, GroupLayout.PREFERRED_SIZE))
-				.addComponent(scrollPaneGame, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 615, Short.MAX_VALUE)
-		);
-		getContentPane().setLayout(groupLayout);
+		
+		SpringLayout springLayout = new SpringLayout();
+		springLayout.putConstraint(SpringLayout.NORTH, labelScore, 14, SpringLayout.SOUTH, btnStop);
+		springLayout.putConstraint(SpringLayout.WEST, labelScore, -96, SpringLayout.EAST, btnStart);
+		springLayout.putConstraint(SpringLayout.SOUTH, labelScore, 56, SpringLayout.SOUTH, btnStop);
+		springLayout.putConstraint(SpringLayout.EAST, labelScore, 0, SpringLayout.EAST, btnStart);
+		springLayout.putConstraint(SpringLayout.NORTH, scrollPaneGame, 0, SpringLayout.NORTH, getContentPane());
+		springLayout.putConstraint(SpringLayout.WEST, scrollPaneGame, 0, SpringLayout.WEST, getContentPane());
+		springLayout.putConstraint(SpringLayout.SOUTH, scrollPaneGame, -15, SpringLayout.SOUTH, getContentPane());
+		springLayout.putConstraint(SpringLayout.EAST, scrollPaneGame, -37, SpringLayout.WEST, btnStart);
+		springLayout.putConstraint(SpringLayout.WEST, btnSettings, -117, SpringLayout.EAST, getContentPane());
+		springLayout.putConstraint(SpringLayout.NORTH, btnStop, 6, SpringLayout.SOUTH, btnPause);
+		springLayout.putConstraint(SpringLayout.WEST, btnStop, -117, SpringLayout.EAST, getContentPane());
+		springLayout.putConstraint(SpringLayout.WEST, btnPause, -117, SpringLayout.EAST, getContentPane());
+		springLayout.putConstraint(SpringLayout.EAST, btnSettings, -21, SpringLayout.EAST, getContentPane());
+		springLayout.putConstraint(SpringLayout.EAST, btnStop, -21, SpringLayout.EAST, getContentPane());
+		springLayout.putConstraint(SpringLayout.NORTH, btnPause, 6, SpringLayout.SOUTH, btnStart);
+		springLayout.putConstraint(SpringLayout.EAST, btnPause, -21, SpringLayout.EAST, getContentPane());
+		springLayout.putConstraint(SpringLayout.WEST, btnStart, -117, SpringLayout.EAST, getContentPane());
+		springLayout.putConstraint(SpringLayout.SOUTH, btnSettings, -10, SpringLayout.SOUTH, getContentPane());
+		springLayout.putConstraint(SpringLayout.NORTH, btnStart, 10, SpringLayout.NORTH, getContentPane());
+		springLayout.putConstraint(SpringLayout.EAST, btnStart, -21, SpringLayout.EAST, getContentPane());
+		
+		getContentPane().setLayout(springLayout);
+		getContentPane().add(btnStart);
+		getContentPane().add(btnPause);
+		getContentPane().add(btnStop);
+		
+		getContentPane().add(btnSettings);
+		
+		getContentPane().add(labelScore);
+		getContentPane().add(scrollPaneGame);
 		
 		btnStart.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {

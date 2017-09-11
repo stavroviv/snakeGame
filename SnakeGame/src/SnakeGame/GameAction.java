@@ -3,8 +3,9 @@ package SnakeGame;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.Timer;
+import java.text.DecimalFormat;
 
+import javax.swing.Timer;
 
 @SuppressWarnings("serial")
 public class GameAction extends Canvas {
@@ -13,29 +14,43 @@ public class GameAction extends Canvas {
 	public int delay = 50;
 	public static Animals snake;
 	public static Animals[] anim = new Animals[mainForm.playHeight*mainForm.playWidth];
-	int i, j, count;
+	int count;
 	int xApple, yApple;
 	static Timer timer;
 	static boolean inGame = false;
 	public Direction dir;
 	boolean isPaused = false;
-	Graphics buf;
 
-	void paintForeground(Graphics g) {
 
-		for (i = 0; i < mainForm.playWidth; i = i + mainForm.block) {
-			for (j = 0; j < mainForm.playHeight; j = j + mainForm.block) {
-				g.setColor(Color.black);
-				g.fillRect(i, j, mainForm.block, mainForm.block);
+	void paintForeground(Graphics g, boolean paintAll) {
 
+		if (!mainForm.notDoubleBuffered||paintAll) {
+			for (int i = 0; i < mainForm.playWidth; i = i + mainForm.block) {
+				for (int j = 0; j < mainForm.playHeight; j = j + mainForm.block) {
+					g.setColor(Color.black);
+					g.fillRect(i, j, mainForm.block, mainForm.block);
+				}
+			}
+		} else {
+
+			for (int k = 0; k <= mainForm.totalAnimals - 1; k++) {
+				
+				int max = 3;
+				if (k != 0) max = 1;
+
+				for (int j = 0; j < max; j++) {
+					g.setClip(anim[k].lastX[j], anim[k].lastY[j], mainForm.block, mainForm.block);
+					g.setColor(Color.BLACK);
+					g.fillRect(anim[k].lastX[j], anim[k].lastY[j], mainForm.block, mainForm.block);
+				}
 			}
 		}
+		
 	}
 
-	void paintPart(Animals anim, Graphics g, int size) {
+	void paintPart(Animals anim, int xAnim, int yAnim, Graphics g, int size) {
 		
-		g.setClip(anim.x[i],anim.y[i], mainForm.block, mainForm.block);
-
+		g.setClip(xAnim, yAnim, mainForm.block, mainForm.block);
 		Color col;
 		
 		switch (anim.getaType()) {
@@ -61,23 +76,22 @@ public class GameAction extends Canvas {
 		}
 				
 		g.setColor(col);
-		g.fillOval(anim.x[i] + (mainForm.block - mainForm.block / size) / 2, anim.y[i] + (mainForm.block - mainForm.block / size) / 2, mainForm.block / size, mainForm.block / size);
+		g.fillOval(xAnim + (mainForm.block - mainForm.block / size) / 2, yAnim + (mainForm.block - mainForm.block / size) / 2, mainForm.block / size, mainForm.block / size);
 		g.setColor(Color.white);
-		g.drawOval(anim.x[i] + (mainForm.block - mainForm.block / size) / 2, anim.y[i] + (mainForm.block - mainForm.block / size) / 2, mainForm.block / size, mainForm.block / size);
+		g.drawOval(xAnim + (mainForm.block - mainForm.block / size) / 2, yAnim + (mainForm.block - mainForm.block / size) / 2, mainForm.block / size, mainForm.block / size);
 		
 	}
 		
 	public void draw(Graphics g) {
 
-		paintForeground(g);
+		paintForeground(g,false);
 		mainForm.labelScore.setText("Score: " + Score);
 		
 		if (!inGame) return;
 		
 					
 		for (int k = 0; k <= mainForm.totalAnimals-1; k++) {
-			
-//			if (anim[k]==null)	break;
+
 			if (anim[k].die) continue;
 			
 			if (k == 0) {
@@ -103,29 +117,34 @@ public class GameAction extends Canvas {
 				}
 			}
 						
-			for (i = 0; i < anim[k].animSize; i++) {
+			for (int i = 0; i < anim[k].animSize; i++) {
 				
 				if (i == 0) {
-					paintPart(anim[k], g, 2);
+					paintPart(anim[k], anim[k].x[i], anim[k].y[i], g, 2);
 				} else if (i == anim[k].animSize - 1) {
-					paintPart(anim[k], g, 4);
+					paintPart(anim[k], anim[k].x[i], anim[k].y[i], g, 4);
 				} else {
-					paintPart(anim[k], g, 3);
+					paintPart(anim[k], anim[k].x[i], anim[k].y[i], g, 3);
 				}
 			}
 		}
-
-		
 	
 	}
 	
-	// @Override
+	public void paint (Graphics g){
+		paintForeground(g, true);
+	}
+	
 	public void update(Graphics g){
 
-		Image offScreenlmage = createImage(mainForm.playWidth, mainForm.playHeight);
-		Graphics offscreenGraphics = offScreenlmage.getGraphics();
-		draw(offscreenGraphics);
-		g.drawImage(offScreenlmage, 0, 0, null);
+		if (mainForm.notDoubleBuffered){
+			draw(g);
+		} else {
+			Image offScreenlmage = createImage(mainForm.playWidth, mainForm.playHeight);
+			Graphics offscreenGraphics = offScreenlmage.getGraphics();
+			draw(offscreenGraphics);
+			g.drawImage(offScreenlmage, 0, 0, null);	
+		}
 
 	}
 
@@ -142,6 +161,8 @@ public class GameAction extends Canvas {
 	public void Start() {
 		
 		if (!isPaused) {
+			
+			repaint();
 			
 			Score = 0;
 			
@@ -183,14 +204,12 @@ public class GameAction extends Canvas {
 		
 	}
 	
-	public static void gameOver () {
-		mainForm.labelScore.setText("<html>Score: "+Score+"<p>GAME OVER</html>");
-		Stop();
-	}
 	
 	public static void Stop() {
 		
-		if (!inGame) return;
+		if (!inGame) {
+			return;
+			}
 		
 		timer.stop();
 		inGame = false;
@@ -202,11 +221,14 @@ public class GameAction extends Canvas {
 		}
 		
 		snakeApp.snakeGame.setButtonsEnabled("Stop");
-		
-		
-		
+			
 	}
 
+	public static void gameOver () {
+		mainForm.labelScore.setText("<html>Score: "+Score+"<p>GAME OVER</html>");
+		Stop();
+	}
+	
 }
 
 

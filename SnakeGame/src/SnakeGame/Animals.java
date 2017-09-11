@@ -18,6 +18,9 @@ public class Animals implements Runnable {
 	int[] x = new int[mainForm.playWidth];
 	int[] y = new int[mainForm.playHeight];
 	
+	public int[] lastX = new int[mainForm.playWidth];
+	public int[] lastY = new int[mainForm.playHeight];
+	
 	public int i, animSize;
 		
 	boolean inGame;
@@ -133,13 +136,23 @@ public class Animals implements Runnable {
 	}
 	
 	public void move() {
-		
+				
 		if (aType == animalType.Snake) {
-			for (i = animSize; i > 0; i--) {
+			int g=1;
+			lastX[0] = x[0];
+			lastY[0] = y[0];
+			lastX[1] = x[animSize-1];
+			lastY[1] = y[animSize-1];
+			lastX[2] = x[animSize-2];
+			lastY[2] = y[animSize-2];
+			for (i = animSize-1; i > 0; i--) {
+				
 				x[i] = x[i - 1];
 				y[i] = y[i - 1];
 			}
-
+			
+			
+			
 			if (dir == Direction.Right)	x[0] = x[0] + mainForm.block;
 			if (dir == Direction.Left)	x[0] = x[0] - mainForm.block;
 			if (dir == Direction.Up)	y[0] = y[0] - mainForm.block;
@@ -154,7 +167,8 @@ public class Animals implements Runnable {
 			
 		} else {
 		
-
+			lastX[0] = x[0];
+			lastY[0] = y[0];
 			
 			Map<String, Integer> froggCoord = new HashMap<String, Integer>();
 			froggCoord = getNewFroggCoord(x[0], y[0]);

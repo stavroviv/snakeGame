@@ -5,6 +5,7 @@ import javax.swing.*;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.nio.DoubleBuffer;
 import java.awt.Dialog.ModalExclusionType;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
@@ -19,14 +20,15 @@ public class settingsForm extends JFrame {
 	private JTextField height,width,bloskSize,snakeSize;
 	private JTextField greenFroggs, redFroggs,blueFroggs;
 	private JTextField froggProb;
-
+	private JCheckBox doubleBufferedCheck;
+	
 	public settingsForm() {
 		
 		setModalExclusionType(ModalExclusionType.APPLICATION_EXCLUDE);
 		setResizable(false);
 		setTitle("Settings");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 353, 218);
+		setBounds(100, 100, 374, 218);
 		setLocationRelativeTo(null);
 		setFocusable(true);
 		
@@ -84,38 +86,7 @@ public class settingsForm extends JFrame {
 		bloskSize.setColumns(10);
 		bloskSize.setText("" + mainForm.block);
 		contentPane.add(bloskSize);
-		
-		JButton btnNewButton_1 = new JButton("Cancel");
-		btnNewButton_1.setBounds(194, 155, 76, 23);
-		btnNewButton_1.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				dispose();
-			}
-		});
-		contentPane.add(btnNewButton_1);
-		
-		JButton btnNewButton = new JButton("OK");
-		btnNewButton.setBounds(113, 155, 71, 23);
-		btnNewButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				mainForm.block = Integer.parseInt(bloskSize.getText());
-				mainForm.playHeight = Integer.parseInt(height.getText());
-				mainForm.playWidth = Integer.parseInt(width.getText());
 				
-				mainForm.snakeSize = Integer.parseInt(snakeSize.getText());
-				mainForm.greenFroggs = Integer.parseInt(greenFroggs.getText());
-				mainForm.redFroggs = Integer.parseInt(redFroggs.getText());
-				mainForm.blueFroggs = Integer.parseInt(blueFroggs.getText());
-				
-				mainForm.totalAnimals = mainForm.greenFroggs+mainForm.redFroggs+mainForm.blueFroggs+1;
-				mainForm.froggProbability = Double.parseDouble(froggProb.getText());
-//				mainForm.scrollPaneGame.setSize(900, 300);		
-				dispose();
-			}
-		});
-		
-		contentPane.add(btnNewButton);
-		
 		snakeSize = new JTextField();
 		snakeSize.setBounds(302, 35, 36, 20);
 		contentPane.add(snakeSize);
@@ -153,7 +124,7 @@ public class settingsForm extends JFrame {
 		lblBlue.setBounds(151, 88, 38, 14);
 		contentPane.add(lblBlue);
 		
-		JLabel lblSnakeSize = new JLabel("<html>Snake<p>size</html>");
+		JLabel lblSnakeSize = new JLabel("<html>Snake<BR>size</html>");
 		lblSnakeSize.setBounds(262, 30, 36, 34);
 		contentPane.add(lblSnakeSize);
 		
@@ -168,5 +139,43 @@ public class settingsForm extends JFrame {
 		lblNewLabel_1.setBorder(new TitledBorder(null, "Froggs", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		lblNewLabel_1.setBounds(140, 10, 120, 134);
 		contentPane.add(lblNewLabel_1);
+		
+		doubleBufferedCheck = new JCheckBox("<html>Double<BR>buffer</html>");
+		doubleBufferedCheck.setBounds(259, 83, 103, 30);
+		doubleBufferedCheck.setSelected(!mainForm.notDoubleBuffered);
+		contentPane.add(doubleBufferedCheck);
+		
+		JButton btnNewButton = new JButton("OK");
+		btnNewButton.setBounds(118, 155, 71, 23);
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				mainForm.block = Integer.parseInt(bloskSize.getText());
+				mainForm.playHeight = Integer.parseInt(height.getText());
+				mainForm.playWidth = Integer.parseInt(width.getText());
+				
+				mainForm.snakeSize = Integer.parseInt(snakeSize.getText());
+				mainForm.greenFroggs = Integer.parseInt(greenFroggs.getText());
+				mainForm.redFroggs = Integer.parseInt(redFroggs.getText());
+				mainForm.blueFroggs = Integer.parseInt(blueFroggs.getText());
+				
+				mainForm.totalAnimals = mainForm.greenFroggs+mainForm.redFroggs+mainForm.blueFroggs+1;
+				mainForm.froggProbability = Double.parseDouble(froggProb.getText());
+				mainForm.scrollPaneGame.setSize(mainForm.playHeight,mainForm.playWidth);	
+				mainForm.notDoubleBuffered = !doubleBufferedCheck.isSelected();
+				dispose();
+			}
+		});
+		
+		contentPane.add(btnNewButton);
+		
+		JButton btnNewButton_1 = new JButton("Cancel");
+		btnNewButton_1.setBounds(200, 155, 76, 23);
+		btnNewButton_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				dispose();
+			}
+		});
+		contentPane.add(btnNewButton_1);
+		
 	}
 }

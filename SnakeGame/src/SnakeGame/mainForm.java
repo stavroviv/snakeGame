@@ -33,7 +33,10 @@ public class mainForm extends JFrame {
 	public static int totalAnimals =  greenFroggs + redFroggs + blueFroggs + 1;
 	public static JLabel labelScore;
 	public static ScrollPane scrollPaneGame;
-	private JButton btnStart,btnPause,btnStop,btnSettings;
+	private static JButton btnStart;
+	private static JButton btnPause;
+	private static JButton btnStop;
+	private static JButton btnSettings;
 	public static double froggProbability=0.8;
 	public static boolean notDoubleBuffered;
 	
@@ -49,24 +52,6 @@ public class mainForm extends JFrame {
 		getContentPane().setFocusable(true);
 
 		GameAction game = new GameAction();
-		game.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mousePressed(MouseEvent arg0) {
-				Direction dirSn = GameAction.snake.dir;
-				if (arg0.getButton()==1) {
-					if (dirSn==Direction.Right)	GameAction.snake.dir=Direction.Up;
-					if (dirSn==Direction.Left)	GameAction.snake.dir=Direction.Down;
-					if (dirSn==Direction.Up)	GameAction.snake.dir=Direction.Left;
-					if (dirSn==Direction.Down)	GameAction.snake.dir=Direction.Right;
-				} else if (arg0.getButton()==3){
-					if (dirSn==Direction.Right)	GameAction.snake.dir=Direction.Down;
-					if (dirSn==Direction.Left)	GameAction.snake.dir=Direction.Up;
-					if (dirSn==Direction.Up)	GameAction.snake.dir=Direction.Right;
-					if (dirSn==Direction.Down)	GameAction.snake.dir=Direction.Left;
-				}
-			}
-		});
-	
 		game.setBounds(0, 0, playWidth, playHeight);
 		game.setFocusable(true);
 		
@@ -122,15 +107,17 @@ public class mainForm extends JFrame {
 				setButtonsEnabled("Start");
 			}
 		});
+		
 		btnPause.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				game.Pause();
 				setButtonsEnabled("Pause");
 			}
 		});
+		
 		btnStop.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				GameAction.Stop();
+				game.Stop();
 				setButtonsEnabled("Stop");
 			}
 		});
@@ -143,8 +130,9 @@ public class mainForm extends JFrame {
 		});
 	
 	}
+	
 		
-	public void setButtonsEnabled(String mode){
+	public static void setButtonsEnabled(String mode){
 		
 		if (mode == "Init") {
 			btnPause.setEnabled(false);
@@ -165,4 +153,5 @@ public class mainForm extends JFrame {
 			btnStop.setEnabled(true);
 		} 
 	}
+
 }

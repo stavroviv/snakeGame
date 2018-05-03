@@ -1,6 +1,5 @@
 package SnakeGame;
 
-import java.util.AbstractMap;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -8,7 +7,7 @@ import java.util.Random;
 
 
 public class Animals implements Runnable {
-
+		
 	int delay;
 	Thread thread;
 	boolean die, isPaused;
@@ -27,7 +26,7 @@ public class Animals implements Runnable {
 	
 	Direction dir;
 	animalType aType;
-
+	
 	public animalType getaType(){
 		return this.aType;
 	}
@@ -98,18 +97,6 @@ public class Animals implements Runnable {
 		}
 	}
 
-	void checkCollisions() {
-		
-		// snake with snake
-		for (int j=1; j<=GameAction.snake.animSize-1; j++){
-			if (GameAction.snake.x[j] == GameAction.snake.x[0] && GameAction.snake.y[j] == GameAction.snake.y[0]) {
-				// The frog stays in place
-				GameAction.gameOver();
-				break;
-			}
-		}
-	
-	}
 
 	boolean checkNewPos(int newX, int newY){
 		
@@ -123,14 +110,12 @@ public class Animals implements Runnable {
 		}
 		
 		// froggs with froggs
-		for (int k = 1; k <= mainForm.totalAnimals - 1; k++) {
-				if (GameAction.anim[k] == null) break;
-				if (GameAction.anim[k].die) continue;
-				if (!GameAction.anim[k].equals(this)&&GameAction.anim[k].x[0] == newX && GameAction.anim[k].y[0] == newY) {
-					return false;
-				}
+		for (Animals curAnim: GameAction.anim) {
+
+			if (!curAnim.equals(this)&&curAnim.x[0] == newX && curAnim.y[0] == newY) {
+				return false;
 			}
-		
+		}
 		return result;
 		
 	}
@@ -138,27 +123,28 @@ public class Animals implements Runnable {
 	public void move() {
 				
 		if (aType == animalType.Snake) {
+			
 			int g=1;
+			
 			lastX[0] = x[0];
 			lastY[0] = y[0];
 			lastX[1] = x[animSize-1];
 			lastY[1] = y[animSize-1];
 			lastX[2] = x[animSize-2];
 			lastY[2] = y[animSize-2];
+			
 			for (i = animSize-1; i > 0; i--) {
 				
 				x[i] = x[i - 1];
 				y[i] = y[i - 1];
 			}
-			
-			
-			
+						
 			if (dir == Direction.Right)	x[0] = x[0] + mainForm.block;
 			if (dir == Direction.Left)	x[0] = x[0] - mainForm.block;
 			if (dir == Direction.Up)	y[0] = y[0] - mainForm.block;
 			if (dir == Direction.Down)	y[0] = y[0] + mainForm.block;
 			
-			checkCollisions();
+			GameAction.checkCollisions();
 			
 			if (x[0] > mainForm.playWidth-mainForm.block)	x[0] = 0;
 			if (y[0] > mainForm.playHeight-mainForm.block)	y[0] = 0;

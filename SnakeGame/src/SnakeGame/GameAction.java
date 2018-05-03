@@ -135,13 +135,13 @@ public class GameAction extends Canvas implements MouseListener{
 			
 			if (curAnim.getaType()==animalType.Snake) { 
 				for (int i=0; i<curAnim.animSize; i++) {
-					if (i == 0) {
-						paintPart(curAnim, curAnim.x[i], curAnim.y[i], g, 2);
-					} else if (i == curAnim.animSize - 1) {
-						paintPart(curAnim, curAnim.x[i], curAnim.y[i], g, 4);
-					} else {
-						paintPart(curAnim, curAnim.x[i], curAnim.y[i], g, 3);
-					}
+					
+					int size = 3;
+					
+					if (i == 0) size = 2; 
+					else if (i == curAnim.animSize - 1) size = 4;
+					
+					paintPart(curAnim, curAnim.x[i], curAnim.y[i], g, size);
 				}
 			} 
 			else paintPart(curAnim, curAnim.x[0], curAnim.y[0], g, 3);

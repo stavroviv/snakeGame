@@ -5,29 +5,53 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.text.DecimalFormat;
-//import java.util.EventListener;
+//import java.awt.event.MouseListener;
 import java.util.ArrayList;
 
 import javax.swing.Timer;
 
-@SuppressWarnings("serial")
-public class GameAction extends Canvas implements MouseListener{
+public class GameAction extends Canvas {
 	
+	private static final long serialVersionUID = 8066511088862750276L;
 	static int Score;
-	public int delay = 50;
-	public static Animals snake;
-	public static ArrayList<Animals> anim = new ArrayList<Animals>();
-	int count;
-	int xApple, yApple;
+	public int delay = 10;
+	public static Animal snake;
+	public static ArrayList<Animal> anim = new ArrayList<Animal>();
 	static Timer timer;
 	static boolean inGame = false;
-	public Direction dir;
 	boolean isPaused = false;
 	
 	public GameAction() {
-		addMouseListener(this);
+		
+		this.addMouseListener(new MouseAdapter(){
+			@Override
+			public void mousePressed(MouseEvent arg0) {
+				
+				if (!inGame) return;
+				
+				if (arg0.getButton()==1) {
+					
+					switch(snake.dir){
+						case Right: snake.dir=Direction.Up; 	break;
+						case Left : snake.dir=Direction.Down;	break;
+						case Up   : snake.dir=Direction.Left;	break;
+						case Down : snake.dir=Direction.Right;	break;
+					}
+					
+
+				} else if (arg0.getButton()==3){
+					
+					switch(snake.dir){
+						case Right: snake.dir=Direction.Down; 	break;
+						case Left : snake.dir=Direction.Up;		break;
+						case Up	  : snake.dir=Direction.Right;	break;
+						case Down : snake.dir=Direction.Left;	break;
+					}
+
+				}
+			}	
+		});
+	
 	}
 	
 	public static void checkCollisions() {
@@ -44,33 +68,36 @@ public class GameAction extends Canvas implements MouseListener{
 
 	void paintForeground(Graphics g, boolean paintAll) {
 
-		if (!mainForm.notDoubleBuffered||paintAll) {
-			for (int i = 0; i < mainForm.playWidth; i = i + mainForm.block) {
-				for (int j = 0; j < mainForm.playHeight; j = j + mainForm.block) {
+		if (paintAll) {
+			for (int i = 0; i < GlobalVars.playWidth; i = i + GlobalVars.block) {
+				for (int j = 0; j < GlobalVars.playHeight; j = j + GlobalVars.block) {
 					g.setColor(Color.black);
-					g.fillRect(i, j, mainForm.block, mainForm.block);
+					g.fillRect(i, j, GlobalVars.block, GlobalVars.block);
 				}
 			}
 		} else {
-
-			for (int k = 0; k <= mainForm.totalAnimals - 1; k++) {
+			
+			int k = 0;
+			for (Animal curAnim: GameAction.anim) {
 				
 				int max = 3;
 				if (k != 0) max = 1;
 
 				for (int j = 0; j < max; j++) {
-					g.setClip(anim.get(k).lastX[j], anim.get(k).lastY[j], mainForm.block, mainForm.block);
+					g.setClip(curAnim.lastX[j], curAnim.lastY[j], GlobalVars.block, GlobalVars.block);
 					g.setColor(Color.BLACK);
-					g.fillRect(anim.get(k).lastX[j], anim.get(k).lastY[j], mainForm.block, mainForm.block);
+					g.fillRect(curAnim.lastX[j], curAnim.lastY[j], GlobalVars.block, GlobalVars.block);
 				}
+				
+				k++;
 			}
 		}
 		
 	}
 
-	void paintPart(Animals anim, int xAnim, int yAnim, Graphics g, int size) {
+	void paintPart(Animal anim, int xAnim, int yAnim, Graphics g, int size) {
 		
-		g.setClip(xAnim, yAnim, mainForm.block, mainForm.block);
+		g.setClip(xAnim, yAnim, GlobalVars.block, GlobalVars.block);
 		Color col;
 		
 		switch (anim.getaType()) {
@@ -90,15 +117,11 @@ public class GameAction extends Canvas implements MouseListener{
 			col = Color.YELLOW;
 			break;
 		}
-		
-		if (anim.getaType()!=animalType.Snake){
-			size = 3;
-		}
 				
 		g.setColor(col);
-		g.fillOval(xAnim + (mainForm.block - mainForm.block / size) / 2, yAnim + (mainForm.block - mainForm.block / size) / 2, mainForm.block / size, mainForm.block / size);
+		g.fillOval(xAnim + (GlobalVars.block - GlobalVars.block / size) / 2, yAnim + (GlobalVars.block - GlobalVars.block / size) / 2, GlobalVars.block / size, GlobalVars.block / size);
 		g.setColor(Color.white);
-		g.drawOval(xAnim + (mainForm.block - mainForm.block / size) / 2, yAnim + (mainForm.block - mainForm.block / size) / 2, mainForm.block / size, mainForm.block / size);
+		g.drawOval(xAnim + (GlobalVars.block - GlobalVars.block / size) / 2, yAnim + (GlobalVars.block - GlobalVars.block / size) / 2, GlobalVars.block / size, GlobalVars.block / size);
 		
 	}
 		
@@ -110,7 +133,7 @@ public class GameAction extends Canvas implements MouseListener{
 		
 		if (!inGame) return;
 
-		for (int f = 1; f < GameAction.anim.size() - 1; f++) {
+		for (int f = 1; f < GameAction.anim.size(); f++) {
 
 			// snake with frogg
 			if (snake.x[0] == anim.get(f).x[0] && snake.y[0] == anim.get(f).y[0]) {
@@ -126,24 +149,32 @@ public class GameAction extends Canvas implements MouseListener{
 //					return;
 				}
 				
-				if (inGame)	anim.remove(f);
+				if (inGame) {
+					animalType aType = anim.get(f).getaType();
+					anim.remove(f);
+					if (aType == animalType.Frogg || aType == animalType.RedFrogg) {
+						Animal frogg = new Animal(aType);
+						anim.add(frogg);
+					}
+				}
+				;
 
 			}
 		}
 		
-		for (Animals curAnim: GameAction.anim) {	
+		for (Animal curAnim: GameAction.anim) {	
 			
 			if (curAnim.getaType()==animalType.Snake) { 
 				for (int i=0; i<curAnim.animSize; i++) {
 					
 					int size = 3;
-					
 					if (i == 0) size = 2; 
-					else if (i == curAnim.animSize - 1) size = 4;
+					if (i == curAnim.animSize - 1) size = 4;
 					
 					paintPart(curAnim, curAnim.x[i], curAnim.y[i], g, size);
 				}
 			} 
+			
 			else paintPart(curAnim, curAnim.x[0], curAnim.y[0], g, 3);
 			
 		}
@@ -156,21 +187,23 @@ public class GameAction extends Canvas implements MouseListener{
 	
 	public void update(Graphics g){
 
-		if (mainForm.notDoubleBuffered){
-			draw(g);
-		} else {
-			Image offScreenlmage = createImage(mainForm.playWidth, mainForm.playHeight);
+		if (GlobalVars.DoubleBuffered){
+			
+			Image offScreenlmage = createImage(GlobalVars.playWidth, GlobalVars.playHeight);
 			Graphics offscreenGraphics = offScreenlmage.getGraphics();
 			draw(offscreenGraphics);
-			g.drawImage(offScreenlmage, 0, 0, null);	
-		}
-
+			g.drawImage(offScreenlmage, 0, 0, null);
+			
+		} 
+		
+		else draw(g);
+	
 	}
 
 	void addAnimals(int qAnimals, animalType aType) {
 		
 		for (int i = 0; i < qAnimals; i++) {
-			Animals frogg = new Animals(aType);
+			Animal frogg = new Animal(aType);
 			anim.add(frogg);
 		}
 		
@@ -180,14 +213,11 @@ public class GameAction extends Canvas implements MouseListener{
 		
 		if (!isPaused) {
 			
-			repaint();
-			
 			anim.clear();
 			
 			Score = 0;
 			
-			count = 0;
-			snake = new Animals(animalType.Snake);
+			snake = new Animal(animalType.Snake);
 			anim.add(snake);
 			
 			addAnimals(mainForm.greenFroggs, animalType.Frogg);
@@ -201,8 +231,10 @@ public class GameAction extends Canvas implements MouseListener{
 					repaint();
 				}
 			});
-		} else {
-			for (Animals curAnim: GameAction.anim) {
+			
+		} 
+		else {
+			for (Animal curAnim: GameAction.anim) {
 				curAnim.unPauseAnim();
 			}
 		}
@@ -210,12 +242,13 @@ public class GameAction extends Canvas implements MouseListener{
 		timer.start();
 		inGame = true;
 		isPaused = false;
+		
 	}
 	
 	public void Pause() {
 
 		isPaused = true;
-		for (Animals curAnim: GameAction.anim) {
+		for (Animal curAnim: GameAction.anim) {
 			curAnim.pauseAnim();
 		}
 		
@@ -237,53 +270,6 @@ public class GameAction extends Canvas implements MouseListener{
 	public static void gameOver () {
 		mainForm.labelScore.setText("<html>Score: " + Score + "<p>GAME OVER</html>");
 		Stop();
-	}
-	
-	
-	@Override
-	public void mousePressed(MouseEvent arg0) {
-		
-		if (arg0.getButton()==1) {
-			
-			switch(snake.dir){
-				case Right: snake.dir=Direction.Up; 	break;
-				case Left : snake.dir=Direction.Down;	break;
-				case Up   : snake.dir=Direction.Left;	break;
-				case Down : snake.dir=Direction.Right;	break;
-			}
-			
-
-		} else if (arg0.getButton()==3){
-			
-			switch(snake.dir){
-				case Right: snake.dir=Direction.Down; 	break;
-				case Left : snake.dir=Direction.Up;		break;
-				case Up	  : snake.dir=Direction.Right;	break;
-				case Down : snake.dir=Direction.Left;	break;
-			}
-
-		}
-	}
-	
-	@Override
-	public void mouseClicked(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-	@Override
-	public void mouseEntered(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-	@Override
-	public void mouseExited(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-	@Override
-	public void mouseReleased(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	

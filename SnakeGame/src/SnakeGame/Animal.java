@@ -6,19 +6,18 @@ import java.util.Map;
 import java.util.Random;
 
 
-public class Animals implements Runnable {
+public class Animal implements Runnable {
 		
 	int delay;
 	Thread thread;
 	boolean die, isPaused;
-	int snakeDelay = 100;
-	int frogDelay = 1000;
+	int frogDelay = GlobalVars.snakeDelay*10;
 	
-	int[] x = new int[mainForm.playWidth];
-	int[] y = new int[mainForm.playHeight];
+	int[] x = new int[GlobalVars.playWidth];
+	int[] y = new int[GlobalVars.playHeight];
 	
-	public int[] lastX = new int[mainForm.playWidth];
-	public int[] lastY = new int[mainForm.playHeight];
+	public int[] lastX = new int[3];
+	public int[] lastY = new int[3];
 	
 	public int i, animSize;
 		
@@ -31,28 +30,32 @@ public class Animals implements Runnable {
 		return this.aType;
 	}
 	
-	Animals(animalType aType) {
+	Animal(animalType aType) {
 		
 		this.aType = aType;
 		
 		if (aType == animalType.Snake) {
-			animSize = mainForm.snakeSize;
-			delay = snakeDelay;
+			
+			animSize = GlobalVars.snakeSize;
+			delay = GlobalVars.snakeDelay;
+
 			int j = 0;
 			for (i = animSize; i > 0; i--) {
-				x[j] = i * mainForm.block;
+				x[j] = i * GlobalVars.block;
 				y[j] = 0;
 				j++;
 			}
+
 		} else {
+			
 			animSize = 1;
 			delay = frogDelay;
 			Random random = new Random();
-			int newX = random.nextInt(mainForm.playWidth / mainForm.block) * mainForm.block;
-			int newY = random.nextInt(mainForm.playHeight / mainForm.block) * mainForm.block;
-			while (!checkNewPos(newX,newY)) {
-				newX = random.nextInt(mainForm.playWidth / mainForm.block) * mainForm.block;
-				newY = random.nextInt(mainForm.playHeight / mainForm.block) * mainForm.block;	
+			int newX = random.nextInt(GlobalVars.playWidth / GlobalVars.block) * GlobalVars.block;
+			int newY = random.nextInt(GlobalVars.playHeight / GlobalVars.block) * GlobalVars.block;
+			while (!checkNewPos(newX, newY)) {
+				newX = random.nextInt(GlobalVars.playWidth / GlobalVars.block) * GlobalVars.block;
+				newY = random.nextInt(GlobalVars.playHeight / GlobalVars.block) * GlobalVars.block;
 			}
 			x[0] = newX;
 			y[0] = newY;
@@ -69,7 +72,7 @@ public class Animals implements Runnable {
 		thread.interrupt();
 	}
 	
-	public void pauseAnim() {
+	synchronized public void pauseAnim() {
 		isPaused = true;
 	}
 	
@@ -97,7 +100,6 @@ public class Animals implements Runnable {
 		}
 	}
 
-
 	boolean checkNewPos(int newX, int newY){
 		
 		boolean result=true;
@@ -110,11 +112,14 @@ public class Animals implements Runnable {
 		}
 		
 		// froggs with froggs
-		for (Animals curAnim: GameAction.anim) {
-
+		for (Animal curAnim: GameAction.anim) {
+			
+			if (aType == animalType.Snake) continue;
+			
 			if (!curAnim.equals(this)&&curAnim.x[0] == newX && curAnim.y[0] == newY) {
 				return false;
 			}
+			
 		}
 		return result;
 		
@@ -123,9 +128,7 @@ public class Animals implements Runnable {
 	public void move() {
 				
 		if (aType == animalType.Snake) {
-			
-			int g=1;
-			
+		
 			lastX[0] = x[0];
 			lastY[0] = y[0];
 			lastX[1] = x[animSize-1];
@@ -139,17 +142,17 @@ public class Animals implements Runnable {
 				y[i] = y[i - 1];
 			}
 						
-			if (dir == Direction.Right)	x[0] = x[0] + mainForm.block;
-			if (dir == Direction.Left)	x[0] = x[0] - mainForm.block;
-			if (dir == Direction.Up)	y[0] = y[0] - mainForm.block;
-			if (dir == Direction.Down)	y[0] = y[0] + mainForm.block;
+			if (dir == Direction.Right)	x[0] = x[0] + GlobalVars.block;
+			if (dir == Direction.Left)	x[0] = x[0] - GlobalVars.block;
+			if (dir == Direction.Up)	y[0] = y[0] - GlobalVars.block;
+			if (dir == Direction.Down)	y[0] = y[0] + GlobalVars.block;
 			
 			GameAction.checkCollisions();
 			
-			if (x[0] > mainForm.playWidth-mainForm.block)	x[0] = 0;
-			if (y[0] > mainForm.playHeight-mainForm.block)	y[0] = 0;
-			if (x[0] < 0)	x[0] = mainForm.playWidth-mainForm.block;
-			if (y[0] < 0)	y[0] = mainForm.playHeight-mainForm.block;
+			if (x[0] > GlobalVars.playWidth-GlobalVars.block)	x[0] = 0;
+			if (y[0] > GlobalVars.playHeight-GlobalVars.block)	y[0] = 0;
+			if (x[0] < 0)	x[0] = GlobalVars.playWidth-GlobalVars.block;
+			if (y[0] < 0)	y[0] = GlobalVars.playHeight-GlobalVars.block;
 			
 		} else {
 		
@@ -159,10 +162,10 @@ public class Animals implements Runnable {
 			Map<String, Integer> froggCoord = new HashMap<String, Integer>();
 			froggCoord = getNewFroggCoord(x[0], y[0]);
 			
-			if (froggCoord.get("newX") > mainForm.playWidth-mainForm.block)	 froggCoord.put("newX", 0);
-			if (froggCoord.get("newY") > mainForm.playHeight-mainForm.block) froggCoord.put("newY", 0);
-			if (froggCoord.get("newX") < 0)	froggCoord.put("newX", mainForm.playWidth-mainForm.block);
-			if (froggCoord.get("newY") < 0)	froggCoord.put("newY", mainForm.playHeight-mainForm.block);
+			if (froggCoord.get("newX") > GlobalVars.playWidth -GlobalVars.block)	 froggCoord.put("newX", 0);
+			if (froggCoord.get("newY") > GlobalVars.playHeight-GlobalVars.block) froggCoord.put("newY", 0);
+			if (froggCoord.get("newX") < 0)	froggCoord.put("newX", GlobalVars.playWidth -GlobalVars.block);
+			if (froggCoord.get("newY") < 0)	froggCoord.put("newY", GlobalVars.playHeight-GlobalVars.block);
 			
 			if (checkNewPos(froggCoord.get("newX"),froggCoord.get("newY"))) {
 				x[0] = froggCoord.get("newX");
@@ -178,10 +181,10 @@ public class Animals implements Runnable {
 		Map<String, Integer> froggCoord = new HashMap<String, Integer>();
 		
 		dot[] distance = new dot[4];
-		distance[0]= new dot(curX + mainForm.block, curY);
-		distance[1]= new dot(curX - mainForm.block, curY);
-		distance[2]= new dot(curX, 					curY + mainForm.block);
-		distance[3]= new dot(curX, 					curY - mainForm.block);
+		distance[0]= new dot(curX + GlobalVars.block, curY);
+		distance[1]= new dot(curX - GlobalVars.block, curY);
+		distance[2]= new dot(curX, curY + GlobalVars.block);
+		distance[3]= new dot(curX, curY - GlobalVars.block);
 			
 		Arrays.sort(distance);
 		
@@ -199,9 +202,7 @@ public class Animals implements Runnable {
 		
 		return froggCoord;
 	}
-	
-
-	
+		
 	public class dot implements Comparable<dot>{
 	    public int x;
 	    public int y;
@@ -234,7 +235,6 @@ public class Animals implements Runnable {
 
 		@Override
 		public int compareTo(dot o) {
-			// TODO Auto-generated method stub
 			double d = o.getDistance()-this.getDistance();
 			int i = (int) d;
 			return i;

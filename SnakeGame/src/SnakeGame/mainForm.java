@@ -1,44 +1,38 @@
 package SnakeGame;
 
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.ScrollPane;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import java.awt.Font;
-import java.awt.ScrollPane;
-import java.awt.Scrollbar;
-
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.LayoutStyle.ComponentPlacement;
-import javax.swing.SwingConstants;
-import net.miginfocom.swing.MigLayout;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.SpringLayout;
-import javax.swing.JSeparator;
-import java.awt.Component;
-import javax.swing.Box;
-import java.awt.Dimension;
-import javax.swing.JToggleButton;
+import javax.swing.SwingConstants;
+import java.awt.Canvas;
+import javax.swing.border.LineBorder;
 
 public class mainForm extends JFrame {
 
 	private static final long serialVersionUID = 6573850909783955564L;
-	public static int block=20, playHeight=block*30, playWidth=block*40;
-	public static int greenFroggs=20, redFroggs=10, blueFroggs=5, snakeSize=3;
-	public static int totalAnimals =  greenFroggs + redFroggs + blueFroggs + 1;
+	public static int greenFroggs=20, redFroggs=5, blueFroggs=0;
 	public static JLabel labelScore;
-	public static ScrollPane scrollPaneGame;
 	private static JButton btnStart;
 	private static JButton btnPause;
 	private static JButton btnStop;
 	private static JButton btnSettings;
 	public static double froggProbability=0.8;
-	public static boolean notDoubleBuffered;
+	private Canvas canvas;
+	
+	public static GameAction game;
+	public static ScrollPane scrollPaneGame;
 	
 	public mainForm() {
 		
@@ -51,10 +45,6 @@ public class mainForm extends JFrame {
 
 		getContentPane().setFocusable(true);
 
-		GameAction game = new GameAction();
-		game.setBounds(0, 0, playWidth, playHeight);
-		game.setFocusable(true);
-		
 		btnStart = new JButton("Start");
 		btnPause = new JButton("Pause");
 		btnStop = new JButton("Stop");
@@ -64,9 +54,13 @@ public class mainForm extends JFrame {
 		labelScore = new JLabel("<html>Score: 0</html>");
 		labelScore.setVerticalAlignment(SwingConstants.TOP);
 		labelScore.setFont(new Font("Tahoma", Font.BOLD, 14));
-		
+
+		game = new GameAction();
+		game.setBackground(Color.BLACK);
+		game.setBounds(0, 0, GlobalVars.playWidth, GlobalVars.playHeight);
+		game.setFocusable(true);
+				
 		scrollPaneGame = new ScrollPane();
-		scrollPaneGame.setSize(600, 600);
 		scrollPaneGame.add(game);
 		
 		SpringLayout springLayout = new SpringLayout();
@@ -75,9 +69,9 @@ public class mainForm extends JFrame {
 		springLayout.putConstraint(SpringLayout.SOUTH, labelScore, 56, SpringLayout.SOUTH, btnStop);
 		springLayout.putConstraint(SpringLayout.EAST, labelScore, 0, SpringLayout.EAST, btnStart);
 		springLayout.putConstraint(SpringLayout.NORTH, scrollPaneGame, 0, SpringLayout.NORTH, getContentPane());
-		springLayout.putConstraint(SpringLayout.WEST, scrollPaneGame, 0, SpringLayout.WEST, getContentPane());
+		springLayout.putConstraint(SpringLayout.WEST,  scrollPaneGame, 0, SpringLayout.WEST, getContentPane());
 		springLayout.putConstraint(SpringLayout.SOUTH, scrollPaneGame, -15, SpringLayout.SOUTH, getContentPane());
-		springLayout.putConstraint(SpringLayout.EAST, scrollPaneGame, -37, SpringLayout.WEST, btnStart);
+		springLayout.putConstraint(SpringLayout.EAST,  scrollPaneGame, -37, SpringLayout.WEST, btnStart);
 		springLayout.putConstraint(SpringLayout.WEST, btnSettings, -117, SpringLayout.EAST, getContentPane());
 		springLayout.putConstraint(SpringLayout.NORTH, btnStop, 6, SpringLayout.SOUTH, btnPause);
 		springLayout.putConstraint(SpringLayout.WEST, btnStop, -117, SpringLayout.EAST, getContentPane());
@@ -100,6 +94,8 @@ public class mainForm extends JFrame {
 		
 		getContentPane().add(labelScore);
 		getContentPane().add(scrollPaneGame);
+	
+	
 		
 		btnStart.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {

@@ -22,12 +22,9 @@ public class snakeApp {
 				break;	
 			}
 
-            System.out.println(args[i]);
 		}
 		
 		GlobalVars.refreshVars();
-		 
-		System.out.println("" + GlobalVars.Width + " " + GlobalVars.playWidth);
 		
 		mainForm snakeGame = new mainForm();
 		snakeGame.setVisible(true); 

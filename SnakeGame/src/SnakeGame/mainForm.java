@@ -11,7 +11,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.SpringLayout;
 import javax.swing.SwingConstants;
-import java.awt.SystemColor;
 
 public class mainForm extends JFrame {
 

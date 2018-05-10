@@ -32,10 +32,10 @@ public class GlobalVars {
 			BufferedImage bi = null;
 			
 			try {
-				bi = ImageIO.read(GlobalVars.class.getResource("/resourses/" + aType.toString() + ".gif"));
+				bi = ImageIO.read( GlobalVars.class.getResourceAsStream("/resourses/" + aType.toString() + ".gif"));
 				animalImages.put(aType.toString(), bi);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
+				
 				e.printStackTrace();
 			}
 		}

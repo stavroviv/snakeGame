@@ -5,21 +5,22 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-//import java.awt.event.MouseListener;
 import java.util.ArrayList;
 
 import javax.swing.Timer;
 
 public class GameAction extends Canvas {
 	
+	public Animal snake;
+	public ArrayList<Animal> anim = new ArrayList<Animal>();
+	
 	private static final long serialVersionUID = 8066511088862750276L;
-	static int Score;
-	public int delay = 10;
-	public static Animal snake;
-	public static ArrayList<Animal> anim = new ArrayList<Animal>();
-	static Timer timer;
-	static boolean inGame = false;
+	int Score;
+	int delay = 50;
+	Timer timer;
+	boolean inGame = false;
 	boolean isPaused = false;
+	boolean gameResumed = false;
 	
 	public GameAction() {
 		
@@ -54,7 +55,7 @@ public class GameAction extends Canvas {
 	
 	}
 	
-	public static void checkCollisions() {
+	public void checkCollisions() {
 		
 		// snake with snake
 		for (int j=1; j<=snake.animSize-1; j++){
@@ -66,26 +67,30 @@ public class GameAction extends Canvas {
 	
 	}
 
-	void paintForeground(Graphics g, boolean paintAll) {
+	void paintBackground(Graphics g, boolean paintAll) {
 
 		if (paintAll) {
 			for (int i = 0; i < GlobalVars.playWidth; i = i + GlobalVars.block) {
 				for (int j = 0; j < GlobalVars.playHeight; j = j + GlobalVars.block) {
-					g.setColor(Color.black);
+					g.setColor(mainForm.bgColor);
 					g.fillRect(i, j, GlobalVars.block, GlobalVars.block);
 				}
 			}
 		} else {
 			
 			int k = 0;
-			for (Animal curAnim: GameAction.anim) {
+//			for (Animal curAnim: anim) { --- throws sometimes java.util.ConcurrentModificationException
+			for (int i = 0; k <= anim.size() - 1; i++) {
+			
+				Animal curAnim = anim.get(i);
 				
 				int max = 3;
 				if (k != 0) max = 1;
 
 				for (int j = 0; j < max; j++) {
+
 					g.setClip(curAnim.lastX[j], curAnim.lastY[j], GlobalVars.block, GlobalVars.block);
-					g.setColor(Color.BLACK);
+					g.setColor(mainForm.bgColor);
 					g.fillRect(curAnim.lastX[j], curAnim.lastY[j], GlobalVars.block, GlobalVars.block);
 				}
 				
@@ -127,13 +132,24 @@ public class GameAction extends Canvas {
 		
 	public void draw(Graphics g) {
 
-		paintForeground(g,false);
+		if (!isPaused) {
+			
+			if (!GlobalVars.DoubleBuffered && gameResumed) {
+				
+				paintBackground(g, true);
+				gameResumed = false;
+				
+			} else
+				
+				paintBackground(g, false);
+			
+		}
 		
 		mainForm.labelScore.setText("Score: " + Score);
 		
 		if (!inGame) return;
 
-		for (int f = 1; f < GameAction.anim.size(); f++) {
+		for (int f = 1; f < anim.size(); f++) {
 
 			// snake with frogg
 			if (snake.x[0] == anim.get(f).x[0] && snake.y[0] == anim.get(f).y[0]) {
@@ -153,7 +169,7 @@ public class GameAction extends Canvas {
 					animalType aType = anim.get(f).getaType();
 					anim.remove(f);
 					if (aType == animalType.Frogg || aType == animalType.RedFrogg) {
-						Animal frogg = new Animal(aType);
+						Animal frogg = new Animal(aType, this);
 						anim.add(frogg);
 					}
 				}
@@ -162,7 +178,7 @@ public class GameAction extends Canvas {
 			}
 		}
 		
-		for (Animal curAnim: GameAction.anim) {	
+		for (Animal curAnim: anim) {	
 			
 			if (curAnim.getaType()==animalType.Snake) { 
 				for (int i=0; i<curAnim.animSize; i++) {
@@ -182,7 +198,9 @@ public class GameAction extends Canvas {
 	}
 	
 	public void paint (Graphics g){
-		paintForeground(g, true);
+		
+		paintBackground(g, true);
+		
 	}
 	
 	public void update(Graphics g){
@@ -203,7 +221,7 @@ public class GameAction extends Canvas {
 	void addAnimals(int qAnimals, animalType aType) {
 		
 		for (int i = 0; i < qAnimals; i++) {
-			Animal frogg = new Animal(aType);
+			Animal frogg = new Animal(aType, this);
 			anim.add(frogg);
 		}
 		
@@ -217,24 +235,27 @@ public class GameAction extends Canvas {
 			
 			Score = 0;
 			
-			snake = new Animal(animalType.Snake);
+			snake = new Animal(animalType.Snake, this);
 			anim.add(snake);
 			
-			addAnimals(mainForm.greenFroggs, animalType.Frogg);
-			addAnimals(mainForm.redFroggs,	 animalType.RedFrogg);
-			addAnimals(mainForm.blueFroggs,	 animalType.BlueFrogg);
-
+			addAnimals(GlobalVars.greenFroggs,  animalType.Frogg);
+			addAnimals(GlobalVars.redFroggs,	animalType.RedFrogg);
+			addAnimals(GlobalVars.blueFroggs,	animalType.BlueFrogg);
+			gameResumed = true;
+			
 			timer = new Timer(delay, new ActionListener() {
 
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					repaint();
 				}
+				
 			});
 			
 		} 
+		
 		else {
-			for (Animal curAnim: GameAction.anim) {
+			for (Animal curAnim: anim) {
 				curAnim.unPauseAnim();
 			}
 		}
@@ -248,30 +269,32 @@ public class GameAction extends Canvas {
 	public void Pause() {
 
 		isPaused = true;
-		for (Animal curAnim: GameAction.anim) {
+		for (Animal curAnim: anim) {
 			curAnim.pauseAnim();
 		}
 		
 	}
 		
-	public static void Stop() {
+	public void Stop() {
 		
 		if (!inGame) return;
 		
 		timer.stop();
 		inGame = false;
-
+		isPaused = false;
+		
 		anim.clear();
 		
 		mainForm.setButtonsEnabled("Stop");
 			
 	}
 
-	public static void gameOver () {
+	public void gameOver () {
+		
 		mainForm.labelScore.setText("<html>Score: " + Score + "<p>GAME OVER</html>");
 		Stop();
+		
 	}
-
 	
 }
 

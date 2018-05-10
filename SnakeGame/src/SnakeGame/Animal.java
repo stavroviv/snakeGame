@@ -13,8 +13,8 @@ public class Animal implements Runnable {
 	boolean die, isPaused;
 	int frogDelay = GlobalVars.snakeDelay*10;
 	
-	int[] x = new int[GlobalVars.playWidth];
-	int[] y = new int[GlobalVars.playHeight];
+	int[] x = new int[GlobalVars.Width*GlobalVars.Height];
+	int[] y = new int[GlobalVars.Width*GlobalVars.Height];
 	
 	public int[] lastX = new int[3];
 	public int[] lastY = new int[3];
@@ -22,6 +22,7 @@ public class Animal implements Runnable {
 	public int i, animSize;
 		
 	boolean inGame;
+	GameAction curGame;
 	
 	Direction dir;
 	animalType aType;
@@ -30,9 +31,10 @@ public class Animal implements Runnable {
 		return this.aType;
 	}
 	
-	Animal(animalType aType) {
+	Animal(animalType aType, GameAction curGame) {
 		
 		this.aType = aType;
+		this.curGame = curGame;
 		
 		if (aType == animalType.Snake) {
 			
@@ -50,15 +52,19 @@ public class Animal implements Runnable {
 			
 			animSize = 1;
 			delay = frogDelay;
-			Random random = new Random();
-			int newX = random.nextInt(GlobalVars.playWidth / GlobalVars.block) * GlobalVars.block;
-			int newY = random.nextInt(GlobalVars.playHeight / GlobalVars.block) * GlobalVars.block;
+						
+			int newX = getNewPos(GlobalVars.playWidth);
+			int newY = getNewPos(GlobalVars.playHeight);
+			
 			while (!checkNewPos(newX, newY)) {
-				newX = random.nextInt(GlobalVars.playWidth / GlobalVars.block) * GlobalVars.block;
-				newY = random.nextInt(GlobalVars.playHeight / GlobalVars.block) * GlobalVars.block;
+
+				newX = getNewPos(GlobalVars.playWidth);
+				newY = getNewPos(GlobalVars.playHeight);
 			}
+			
 			x[0] = newX;
 			y[0] = newY;
+			
 		}
 		
 		dir = Direction.Right;
@@ -68,6 +74,11 @@ public class Animal implements Runnable {
     	
 	}
 
+	int getNewPos(int arg){
+		Random random = new Random();
+		return random.nextInt(arg/ GlobalVars.block) * GlobalVars.block;
+	}
+	
 	public void stopAnim(){
 		thread.interrupt();
 	}
@@ -105,14 +116,17 @@ public class Animal implements Runnable {
 		boolean result=true;
 		
 		// snake with froggs
-		for (int j = 1; j <= GameAction.snake.animSize - 1; j++) {
-			if (GameAction.snake.x[j] == newX && GameAction.snake.y[j] == newY) {
+		for (int j = 1; j <= curGame.snake.animSize - 1; j++) {
+			if (curGame.snake.x[j] == newX && curGame.snake.y[j] == newY) {
 				return false;
 			}
 		}
 		
 		// froggs with froggs
-		for (Animal curAnim: GameAction.anim) {
+//		for (Animal curAnim: GameAction.anim) { --- throws sometimes java.util.ConcurrentModificationException
+		for (int j = 1; j <= curGame.anim.size() - 1; j++) {	
+			
+			Animal curAnim = curGame.anim.get(j);
 			
 			if (aType == animalType.Snake) continue;
 			
@@ -121,6 +135,7 @@ public class Animal implements Runnable {
 			}
 			
 		}
+		
 		return result;
 		
 	}
@@ -147,7 +162,7 @@ public class Animal implements Runnable {
 			if (dir == Direction.Up)	y[0] = y[0] - GlobalVars.block;
 			if (dir == Direction.Down)	y[0] = y[0] + GlobalVars.block;
 			
-			GameAction.checkCollisions();
+			curGame.checkCollisions();
 			
 			if (x[0] > GlobalVars.playWidth-GlobalVars.block)	x[0] = 0;
 			if (y[0] > GlobalVars.playHeight-GlobalVars.block)	y[0] = 0;
@@ -162,12 +177,12 @@ public class Animal implements Runnable {
 			Map<String, Integer> froggCoord = new HashMap<String, Integer>();
 			froggCoord = getNewFroggCoord(x[0], y[0]);
 			
-			if (froggCoord.get("newX") > GlobalVars.playWidth -GlobalVars.block)	 froggCoord.put("newX", 0);
+			if (froggCoord.get("newX") > GlobalVars.playWidth -GlobalVars.block) froggCoord.put("newX", 0);
 			if (froggCoord.get("newY") > GlobalVars.playHeight-GlobalVars.block) froggCoord.put("newY", 0);
 			if (froggCoord.get("newX") < 0)	froggCoord.put("newX", GlobalVars.playWidth -GlobalVars.block);
 			if (froggCoord.get("newY") < 0)	froggCoord.put("newY", GlobalVars.playHeight-GlobalVars.block);
 			
-			if (checkNewPos(froggCoord.get("newX"),froggCoord.get("newY"))) {
+			if (checkNewPos(froggCoord.get("newX"), froggCoord.get("newY"))) {
 				x[0] = froggCoord.get("newX");
 				y[0] = froggCoord.get("newY");
 			} 
@@ -190,7 +205,7 @@ public class Animal implements Runnable {
 		
 		double propability = Math.random();
 		
-		if (propability<mainForm.froggProbability){
+		if (propability<GlobalVars.froggProbability){
 			froggCoord.put("newX", distance[0].getX());
 			froggCoord.put("newY", distance[0].getY());
 		} else {
@@ -222,7 +237,7 @@ public class Animal implements Runnable {
 	    }
 		
 	    double getDistance(int frogX, int frogY){
-			return Math.sqrt(Math.pow(frogX-GameAction.snake.x[0],2)+Math.pow(frogY-GameAction.snake.y[0],2));
+			return Math.sqrt(Math.pow(frogX-curGame.snake.x[0],2)+Math.pow(frogY-curGame.snake.y[0],2));
 		}
 		
 	    public int getY() {
@@ -230,7 +245,7 @@ public class Animal implements Runnable {
 	    }
 	    
 		public double getDistance() {
-	         return Math.sqrt(Math.pow(this.x-GameAction.snake.x[0],2)+Math.pow(this.y-GameAction.snake.y[0],2));
+	         return Math.sqrt(Math.pow(this.x-curGame.snake.x[0],2)+Math.pow(this.y-curGame.snake.y[0],2));
 	    }
 
 		@Override

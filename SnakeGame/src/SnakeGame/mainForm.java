@@ -1,8 +1,6 @@
 package SnakeGame;
 
 import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.ScrollPane;
 import java.awt.event.ActionEvent;
@@ -11,25 +9,20 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.ScrollPaneConstants;
 import javax.swing.SpringLayout;
 import javax.swing.SwingConstants;
-import java.awt.Canvas;
-import javax.swing.border.LineBorder;
+import java.awt.SystemColor;
 
 public class mainForm extends JFrame {
 
 	private static final long serialVersionUID = 6573850909783955564L;
-	public static int greenFroggs=20, redFroggs=5, blueFroggs=0;
-	public static JLabel labelScore;
+
 	private static JButton btnStart;
 	private static JButton btnPause;
 	private static JButton btnStop;
 	private static JButton btnSettings;
-	public static double froggProbability=0.8;
-	private Canvas canvas;
+	public static JLabel labelScore;
+	public static Color bgColor = Color.BLACK;
 	
 	public static GameAction game;
 	public static ScrollPane scrollPaneGame;
@@ -39,7 +32,7 @@ public class mainForm extends JFrame {
 		setTitle("Snake");
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 1000, 650);
+		setBounds(100, 100, 1075, 675);
 		setLocationRelativeTo(null);
 		setFocusable(true);
 
@@ -56,7 +49,7 @@ public class mainForm extends JFrame {
 		labelScore.setFont(new Font("Tahoma", Font.BOLD, 14));
 
 		game = new GameAction();
-		game.setBackground(Color.BLACK);
+		game.setBackground(bgColor);
 		game.setBounds(0, 0, GlobalVars.playWidth, GlobalVars.playHeight);
 		game.setFocusable(true);
 				
@@ -94,9 +87,7 @@ public class mainForm extends JFrame {
 		
 		getContentPane().add(labelScore);
 		getContentPane().add(scrollPaneGame);
-	
-	
-		
+			
 		btnStart.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				game.Start();
@@ -126,24 +117,23 @@ public class mainForm extends JFrame {
 		});
 	
 	}
-	
-		
+			
 	public static void setButtonsEnabled(String mode){
 		
-		if (mode == "Init") {
+		if (mode.equals("Init")) {
 			btnPause.setEnabled(false);
 			btnStop.setEnabled(false);
-		} else if (mode == "Start") {
+		} else if (mode.equals("Start")) {
 			btnStart.setEnabled(false);
 			btnPause.setEnabled(true);
 			btnStop.setEnabled(true);
 			btnSettings.setEnabled(false);
-		} else if (mode == "Stop") {
+		} else if (mode.equals("Stop")) {
 			btnStart.setEnabled(true);
 			btnPause.setEnabled(false);
 			btnStop.setEnabled(false);
 			btnSettings.setEnabled(true);
-		} else if (mode == "Pause") {
+		} else if (mode.equals("Pause")) {
 			btnStart.setEnabled(true);
 			btnPause.setEnabled(false);
 			btnStop.setEnabled(true);

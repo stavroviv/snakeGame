@@ -5,14 +5,13 @@ import javax.swing.*;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.Dialog.ModalExclusionType;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 
 
-public class settingsForm extends JFrame {
+public class settingsForm extends JDialog {
 
 	private static final long serialVersionUID = 3770120313513569298L;
 	private JPanel contentPane;
@@ -23,11 +22,10 @@ public class settingsForm extends JFrame {
 		
 	public settingsForm() {
 		
-		setModalExclusionType(ModalExclusionType.APPLICATION_EXCLUDE);
+		setModal(true);
 		setResizable(false);
 		setTitle("Settings");
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 399, 218);
+		setBounds(100, 100, 400, 220);
 		setLocationRelativeTo(null);
 		setFocusable(true);
 				
@@ -42,7 +40,7 @@ public class settingsForm extends JFrame {
 		
 		froggProb = new JTextField();
 		froggProb.setBounds(196, 110, 40, 20);
-		froggProb.setText("" + mainForm.froggProbability);
+		froggProb.setText("" + GlobalVars.froggProbability);
 		contentPane.add(froggProb);
 		froggProb.setColumns(10);
 		
@@ -93,19 +91,19 @@ public class settingsForm extends JFrame {
 		
 		greenFroggs = new JTextField();
 		greenFroggs.setBounds(196, 35, 40, 20);
-		greenFroggs.setText("" + mainForm.greenFroggs);
+		greenFroggs.setText("" + GlobalVars.greenFroggs);
 		contentPane.add(greenFroggs);
 		greenFroggs.setColumns(10);
 		
 		redFroggs = new JTextField();
 		redFroggs.setBounds(196, 60, 40, 20);
-		redFroggs.setText("" + mainForm.redFroggs);
+		redFroggs.setText("" + GlobalVars.redFroggs);
 		contentPane.add(redFroggs);
 		redFroggs.setColumns(10);
 		
 		blueFroggs = new JTextField();
 		blueFroggs.setBounds(196, 85, 40, 20);
-		blueFroggs.setText("" + mainForm.blueFroggs);
+		blueFroggs.setText("" + GlobalVars.blueFroggs);
 		contentPane.add(blueFroggs);
 		blueFroggs.setColumns(10);
 		
@@ -154,21 +152,18 @@ public class settingsForm extends JFrame {
 				GlobalVars.snakeSize 	= Integer.parseInt(snakeSize.getText());
 				GlobalVars.snakeDelay 	= Integer.parseInt(snakeDelay.getText());
 				
-				mainForm.greenFroggs = Integer.parseInt(greenFroggs.getText());
-				mainForm.redFroggs = Integer.parseInt(redFroggs.getText());
-				mainForm.blueFroggs = Integer.parseInt(blueFroggs.getText());
+				GlobalVars.greenFroggs = Integer.parseInt(greenFroggs.getText());
+				GlobalVars.redFroggs   = Integer.parseInt(redFroggs.getText());
+				GlobalVars.blueFroggs  = Integer.parseInt(blueFroggs.getText());
 				
-//				mainForm.totalAnimals = mainForm.greenFroggs+mainForm.redFroggs+mainForm.blueFroggs+1;
-				mainForm.froggProbability = Double.parseDouble(froggProb.getText());
+				GlobalVars.froggProbability = Double.parseDouble(froggProb.getText());
 				GlobalVars.DoubleBuffered = doubleBufferedCheck.isSelected();
 				
 				GlobalVars.refreshVars();
-				mainForm.game.setBounds(0,0, GlobalVars.playWidth,GlobalVars.playHeight);	
-//				mainForm.scrollPaneGame.setMaximumSize(new Dimension(GlobalVars.playWidth,GlobalVars.playHeight));
-				mainForm.game.repaint();
-//				mainForm.scrollPaneGame.remove(mainForm.game);
-//				mainForm.scrollPaneGame.add(mainForm.game);
 				
+				mainForm.game.setBounds(0,0, GlobalVars.playWidth,GlobalVars.playHeight);	
+				mainForm.game.repaint();
+
 				dispose();
 			}
 		});

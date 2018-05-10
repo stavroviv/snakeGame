@@ -19,7 +19,8 @@ public class settingsForm extends JDialog {
 	private JTextField greenFroggs, redFroggs,blueFroggs;
 	private JTextField froggProb;
 	private JCheckBox doubleBufferedCheck;
-		
+	private JCheckBox printImages;
+	
 	public settingsForm() {
 		
 		setModal(true);
@@ -137,7 +138,7 @@ public class settingsForm extends JDialog {
 		contentPane.add(lblNewLabel_1);
 		
 		doubleBufferedCheck = new JCheckBox("<html>Double buffer</html>");
-		doubleBufferedCheck.setBounds(262, 113, 103, 14);
+		doubleBufferedCheck.setBounds(270, 88, 103, 14);
 		doubleBufferedCheck.setSelected(GlobalVars.DoubleBuffered);
 		contentPane.add(doubleBufferedCheck);
 		
@@ -158,6 +159,7 @@ public class settingsForm extends JDialog {
 				
 				GlobalVars.froggProbability = Double.parseDouble(froggProb.getText());
 				GlobalVars.DoubleBuffered = doubleBufferedCheck.isSelected();
+				GlobalVars.printImages = printImages.isSelected();
 				
 				GlobalVars.refreshVars();
 				
@@ -182,7 +184,7 @@ public class settingsForm extends JDialog {
 		JLabel lblSnake = new JLabel("");
 		lblSnake.setVerticalAlignment(SwingConstants.TOP);
 		lblSnake.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Snake", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
-		lblSnake.setBounds(262, 10, 103, 97);
+		lblSnake.setBounds(262, 10, 103, 76);
 		contentPane.add(lblSnake);
 		
 		JLabel label_1 = new JLabel("<html>Delay</html>");
@@ -194,6 +196,11 @@ public class settingsForm extends JDialog {
 		snakeDelay.setColumns(10);
 		snakeDelay.setBounds(317, 60, 36, 20);
 		contentPane.add(snakeDelay);
+		
+		printImages = new JCheckBox("Print images");
+		printImages.setSelected(GlobalVars.printImages);
+		printImages.setBounds(270, 113, 103, 14);
+		contentPane.add(printImages);
 		
 	}
 }

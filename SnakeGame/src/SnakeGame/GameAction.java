@@ -5,8 +5,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 import javax.swing.Timer;
 
 public class GameAction extends Canvas {
@@ -122,16 +127,23 @@ public class GameAction extends Canvas {
 			col = Color.YELLOW;
 			break;
 		}
-				
-		g.setColor(col);
-		g.fillOval(xAnim + (GlobalVars.block - GlobalVars.block / size) / 2, yAnim + (GlobalVars.block - GlobalVars.block / size) / 2, GlobalVars.block / size, GlobalVars.block / size);
-		g.setColor(Color.white);
-		g.drawOval(xAnim + (GlobalVars.block - GlobalVars.block / size) / 2, yAnim + (GlobalVars.block - GlobalVars.block / size) / 2, GlobalVars.block / size, GlobalVars.block / size);
+		
+		if (GlobalVars.printImages) {
+			
+			g.drawImage(GlobalVars.animalImages.get(anim.getaType().toString()), xAnim, yAnim, null);
+			
+		} 
+		else {
+			g.setColor(col);
+			g.fillOval(xAnim + (GlobalVars.block - GlobalVars.block / size) / 2, yAnim + (GlobalVars.block - GlobalVars.block / size) / 2, GlobalVars.block / size, GlobalVars.block / size);
+			g.setColor(Color.white);
+			g.drawOval(xAnim + (GlobalVars.block - GlobalVars.block / size) / 2, yAnim + (GlobalVars.block - GlobalVars.block / size) / 2, GlobalVars.block / size, GlobalVars.block / size);
+		}
 		
 	}
 		
 	public void draw(Graphics g) {
-
+				
 		if (!isPaused) {
 			
 			if (!GlobalVars.DoubleBuffered && gameResumed) {
@@ -194,17 +206,19 @@ public class GameAction extends Canvas {
 			else paintPart(curAnim, curAnim.x[0], curAnim.y[0], g, 3);
 			
 		}
-	
+		
+		
+		
 	}
 	
 	public void paint (Graphics g){
-		
+			
 		paintBackground(g, true);
 		
 	}
 	
 	public void update(Graphics g){
-
+			
 		if (GlobalVars.DoubleBuffered){
 			
 			Image offScreenlmage = createImage(GlobalVars.playWidth, GlobalVars.playHeight);

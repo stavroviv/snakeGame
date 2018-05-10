@@ -21,6 +21,7 @@ public class snakeApp {
 		}
 		
 		GlobalVars.refreshVars();
+		GlobalVars.initImages();
 		
 		mainForm snakeGame = new mainForm();
 		snakeGame.setVisible(true); 

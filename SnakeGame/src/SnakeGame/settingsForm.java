@@ -29,6 +29,7 @@ public class settingsForm extends JDialog {
 		setBounds(100, 100, 400, 220);
 		setLocationRelativeTo(null);
 		setFocusable(true);
+		// check
 				
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
